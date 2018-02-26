@@ -1,3 +1,4 @@
+function []=BehavDataParser(targetdir)
 %% BehavDataParser
 % TDT OpenBridge 에서 추출한 파일을 이용해 행동 데이터를 분석한다.
 % 2018 Knowblesse
@@ -6,8 +7,16 @@ DATALIST = {'ATTK', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing�
 DATAPAIR = [0,      2,      2,      3,      3,      4,      4      ]; % 에러 확인용 값들. 같은 pair 번호를 가지는 데이터 끼리는 크기가 같아야 함.단, 0인경우 신경 안씀.
 
 %% 폴더 선택
-currfolder = 'C:\VCF\Lobster\sampledata\lob4\Block316_GR4\';
-location = strcat(currfolder, '*.csv');
+if ~exist('targetdir','var')
+    currfolder = uigetdir();
+    if currfolder == 0
+        error('Error.\n데이터 파일 폴더를 선택하지 않으셨습니다.','');
+    end
+else
+    currfolder = targetdir;
+end
+
+location = strcat(currfolder, '\*.csv');
 filelist = ls(location);
 
 clearvars location
@@ -44,7 +53,7 @@ for i = 1 : numel(DATALIST)
     startRow = 2;
     formatSpec = '%*s%s%f%*s%*s%*s%*s%*[^\n\r]';
     % 파일 열기
-    fileID = fopen(strcat(currfolder,filename{i}),'r');
+    fileID = fopen(strcat(currfolder,'\',filename{i}),'r');
     dataArray = textscan(fileID, formatSpec, 'Delimiter', ',', 'TextType', 'string', 'HeaderLines' ,startRow-1, 'ReturnOnError', false, 'EndOfLine', '\r\n');
     fclose(fileID);
     % 제대로 불러왔는지 확인
@@ -108,9 +117,9 @@ end
     
 clearvars DATALIST DATAPAIR i 
 
-clearvars Attacks IRs Licks numTrial Trials
+%clearvars Attacks IRs Licks numTrial Trials
 
-
+end
     
     
 
