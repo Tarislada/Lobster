@@ -1,4 +1,4 @@
-function []=BehavDataParser(targetdir)
+function [ParsedData, Trials, IRs, Licks,Attacks ]=BehavDataParser(targetdir)
 %% BehavDataParser
 % TDT OpenBridge 에서 추출한 파일을 이용해 행동 데이터를 분석한다.
 % 2018 Knowblesse
@@ -112,7 +112,7 @@ for i = 1 : numTrial
     ParsedData{i,1} = Trials(i,:);
     ParsedData{i,2} = IRs(sum(and(IRs>=Trials(i,1), IRs<Trials(i,2)),2) == 2,:);
     ParsedData{i,3} = Licks(sum(and(Licks>=Trials(i,1), Licks<Trials(i,2)),2) == 2,:);
-    ParsedData{i,4} = Attacks(and(Attacks>=Trials(i,1), Attacks<Trials(i,2)));
+    ParsedData{i,4} = Attacks(and(Attacks>=Trials(i,1), Attacks<Trials(i,2))) - Trials(i,1);
 end
     
 clearvars DATALIST DATAPAIR i 
