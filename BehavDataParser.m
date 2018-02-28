@@ -12,14 +12,13 @@ if ~exist('targetdir','var')
     if currfolder == 0
         error('Error.\n데이터 파일 폴더를 선택하지 않으셨습니다.','');
     end
+    targetdir = currfolder;
 else
     currfolder = targetdir;
 end
 
 location = strcat(currfolder, '\*.csv');
 filelist = ls(location);
-
-clearvars location
 
 %% 분석에 필요한 모든  데이터 csv 파일이 있는지 확인
 datafound = zeros(1,numel(DATALIST)); 
@@ -41,10 +40,10 @@ if sum(datafound) ~= numel(DATALIST) % 파일이 하나라도 없는 경우
     for i = nodataindex % 없는 놈을 찾아서 error 메시지 생성
         nodatalist = [nodatalist,DATALIST{i},'\n'];
     end
-    error(strcat('Error.\n아래의 csv 파일이 해당 경로에 있지 않습니다.\n',nodatalist),'');
+    error(strcat('Error.\n%s\n위 경로에 아래의 csv 파일이 있지 않습니다.\n',location,nodatalist),'');
 end
 fprintf('행동 데이터 확인 완료\n');
-clearvars i j datafound squeezedFilelist temp nodataindex nodatalist
+clearvars i j datafound squeezedFilelist temp nodataindex nodatalist location
 
 %% 행동 데이터 파일 로드
 RAWDATA = cell(1,numel(DATALIST));
@@ -110,8 +109,8 @@ ParsedData = cell(numTrial,4);
 %% 시행 단위로 쪼개기
 for i = 1 : numTrial
     ParsedData{i,1} = Trials(i,:);
-    ParsedData{i,2} = IRs(sum(and(IRs>=Trials(i,1), IRs<Trials(i,2)),2) == 2,:);
-    ParsedData{i,3} = Licks(sum(and(Licks>=Trials(i,1), Licks<Trials(i,2)),2) == 2,:);
+    ParsedData{i,2} = IRs(sum(and(IRs>=Trials(i,1), IRs<Trials(i,2)),2) == 2,:) - Trials(i,1);
+    ParsedData{i,3} = Licks(sum(and(Licks>=Trials(i,1), Licks<Trials(i,2)),2) == 2,:) - Trials(i,1);
     ParsedData{i,4} = Attacks(and(Attacks>=Trials(i,1), Attacks<Trials(i,2))) - Trials(i,1);
 end
     
@@ -119,6 +118,7 @@ clearvars DATALIST DATAPAIR i
 
 %clearvars Attacks IRs Licks numTrial Trials
 
+fprintf('%s 폴더 분석 완료\n',targetdir);
 end
     
     
