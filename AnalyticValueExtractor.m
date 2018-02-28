@@ -6,7 +6,8 @@ end
 
 %% Constants
 MIN_LICK_CLUSTER_INTERVAL = 0.3; % 히스토그램 분석후 97.6035% 가 속하는 0.3초로 정함.
-MIN_IR_CLUSTER_INTERVAL = 1.3; % % 히스토그램 분석후 67.8255% 가 속하는 1.3초로 정함.
+MIN_IR_CLUSTER_INTERVAL = 1.3; % 히스토그램 분석후 67.8255% 가 속하는 1.3초로 정함.
+MIN_1MIN_TIMEOUT_DURATION = 55; % 1min timeout으로 인정하기 위한 최소의 시간.
 
 %% AnalyticValues
 numTrial = size(ParsedData,1);
@@ -40,6 +41,18 @@ for trial = 1 : size(ParsedData,1)
         numLickClusters(trial) = sum(ILicksI > MIN_LICK_CLUSTER_INTERVAL) + 1;
     end
     
+    %% Avoid / Escape
+    Trial = ParsedData{trial,1};
+    Attack = ParsedData{trial,4};
+    if isempty(Attack) % Attack이 없었음. 
+        if diff(Trial) > MIN_1MIN_TIMEOUT_DURATION % 1분 시간초과 
+            behaviorResult(trial) = 'M';
+        else % Give up
+            behaviorResult(trial) = 'G';
+        end
+    else
+        
+        
 end
         
 
