@@ -18,6 +18,7 @@ for i = {'lob1','lob2','lob3','lob4'} % 이 폴더륻ㄹ에 대해서
     for j = 1 : size(datasetdir,1) % 모든 subject 데이터에 대해
         location = strcat(cd,'\data\',i,'\',datasetnames{1,j});
         [ParsedData, Trials, IRs, Licks,Attacks ] = BehavDataParser(cell2mat(location));
+        % 주의 cum IR, Licks, Attack 데이터는 trial 시작 값 기준으로 정렬이 안되어 있음.
         cumTrials = [cumTrials;Trials];
         cumIRs = [cumIRs; IRs];
         cumLicks = [cumLicks; Licks];
@@ -49,7 +50,7 @@ for i = {'lob1','lob2','lob3','lob4'} % 이 폴더륻ㄹ에 대해서
                 % 이런 경우는 맨 마지막 IR이 아니라 그 전 IR Off와 
                 % Inter-Attack-IROF-Interval을 계산해야한다.
                 %if IRInTrial(end) - ParsedData{trial,4} > 1
-                IAttackIROFI = [IAttackIROFI;IRInTrial(end) - ParsedData{trial,4}];
+                IAttackIROFI = [IAttackIROFI;IRInTrial(end) - ParsedData{trial,4}(1)];
             end 
         end 
         cumIIRI = [cumIIRI;IIRI];
