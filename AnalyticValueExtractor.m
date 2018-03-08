@@ -15,13 +15,14 @@ numTrial = size(ParsedData,1);
 numLickClusters = zeros(numTrial,1);
 numIRClusters = zeros(numTrial,1);
 % Avoid / Escape
-behaviorResult = string(numTrial,1); % A : Avoid | E : Escape | M : 1min timeout | G : Give up| N : No Lick
+behaviorResult = char(zeros(numTrial,1)); % A : Avoid | E : Escape | M : 1min timeout | G : Give up| N : No Lick
+% for every trials
 for trial = 1 : size(ParsedData,1)
     %% IR Cluster
     IRs = ParsedData{trial,2};
     if isempty(IRs) % IR 이 하나도 없으면,
         numIRClusters(trial) = 0;
-        continue;
+        %continue;
     elseif numel(IRs) == 2 % IR이 딱 한번만 끊김
         numIRClusters(trial) = 1;
     else
@@ -33,7 +34,7 @@ for trial = 1 : size(ParsedData,1)
     Licks = ParsedData{trial,3};
     if isempty(Licks) % Lick 이 하나도 없으면,
         numLickClusters(trial) = 0;
-        continue;
+        %continue;
     elseif numel(Licks) == 2 % Lick을 딱 한번만 하면
         numLickClusters(trial) = 1;
     else
@@ -50,9 +51,23 @@ for trial = 1 : size(ParsedData,1)
         else % Give up
             behaviorResult(trial) = 'G';
         end
-    else
+    else % Attack 이 있었음 : Avoid / Escape 둘 중 하나
+        % parameter selection에서 보았듯이 0.5초 이후로 있는 반응은 Attack후 문을 바로 닫지 않아서
+        % 생기는 것
+        IAttackIROFI = IRs(end,2) - Attack; % Attack과 마지막 IR OFF 사이의 시간. +인경우 Escape, -인경우 Avoid
+        k = 1;
+        while IAttackIROFI > 0.5 % IAttackIROFI가 0.5초 이상이라는 것은 마지막 IR이 Attack 후에 생긴 IR 이라는 의미.
+            IAttackIROFI = IRs(end-k,2) - Attack;
+            k = k + 1;
+        end
+        clearvars i
         
-        
+        if IAttackIROFI >= 0 % Escape
+            behaviorResult(trial) = 'E';
+        else % Avoid
+            behaviorResult(trial) = 'A';
+        end
+    end
 end
         
 
