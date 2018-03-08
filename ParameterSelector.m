@@ -58,3 +58,12 @@ for i = {'lob1','lob2','lob3','lob4'} % 이 폴더륻ㄹ에 대해서
         cumIAttackIROFI = [cumIAttackIROFI; IAttackIROFI];
     end
 end
+
+
+% Attack과 IR Off의 간격을 보기위한 스크립트
+% h1 = histogram(cumIAttackIROFI,[-2:0.01:2]);
+% h1.FaceColor = 'k'
+% l1 = line([0,0],[0,70],'Color','r');
+% l1.LineWidth = 2;
+% l1.LineStyle = '--'
+% axis([-2,2,0,70])
