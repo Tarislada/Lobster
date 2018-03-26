@@ -15,5 +15,6 @@ with open('GR_EMP.csv', newline='') as datFile:
 
 ## 형태에 맞게 parsing
 data = np.array(rawdata,dtype='float64')
-trainingData = data[1:6][2::]
+trainingData_X = data[0:6,2::]
+trainingData_Y = np.array([1,0,0,1,1,0]) # GR1,4,5 => 1 else => 0
 
