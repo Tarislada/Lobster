@@ -1,10 +1,10 @@
-from sklearn import svm
+from sklearn.svm import SVC
 import numpy as np
 import csv
 from sklearn.decomposition import PCA
 from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
+from matplotlib.colors import ListedColormap
+from sklearn.feature_selection import SelectKBest, chi2, f_classif, mutual_info_classif
 
 
 ## 데이터 불러오기
@@ -17,36 +17,46 @@ with open('GR_EMP.csv', newline='') as datFile:
         rawdata.append(row)
 
 ## 형태에 맞게 parsing
-data = np.array(rawdata,dtype='float64')[:,1:]
-trainingData_X = data[0:6,:]
-trainingData_Y = np.array([1,0,0,1,1,0]) # GR1,4,5 => 1 else => 0
+X = np.array(rawdata,dtype='float64')[:,1:]
+Y = [1,0,0,1,1,0,2,2,2,2,2,2,2,2]
+
+
+## Feature Selection
+# skb = SelectKBest(mutual_info_classif, k=12)
+# skb.fit(X[:6,:],Y[:6])
+# X = skb.transform(X)
+
 
 ## PCA X
-pca = PCA(n_components=3)
-pca.fit(data)
-Data_x = pca.transform(data)
+pca = PCA(n_components=2) # 2차원으로 분류
+pca.fit(X)
+X_PCA = pca.transform(X)
 
-
-clabel = [1,0,0,1,1,0,2,2,2,2,2,2,2,2]
-# 3d plot
-# pca = PCA(n_components=3)
-
-# fig = plt.figure()
-# ax = fig.add_subplot(111, projection='3d')
-#
-# ax.scatter(Data_x[:,0], Data_x[:,1],Data_x[:,2],c=clabel)
-
-# plt.show()
-
-pca = PCA(n_components=2)
-pca.fit(data)
-Data_x = pca.transform(data)
-
+## Plot PCA Result
 fig, ax = plt.subplots()
 
-ax.scatter(Data_x[:,0], Data_x[:,1],c=clabel)
-for i, txt in enumerate(clabel):
-    ax.annotate(txt,(Data_x[i,0], Data_x[i,1]))
-fig.show()
+ax.scatter(X_PCA[:,0], X_PCA[:,1],c=Y)
+for i, txt in enumerate(Y):
+    ax.annotate(i+1,(X_PCA[i,0], X_PCA[i,1]))
+fig.suptitle('PCA result')
 
+## SVM
+clf_raw = SVC(probability=True)
+# clf_raw.fit(X[:6,:],Y[:6])
+clf_raw.fit(X[:6,:],Y[:6])
+print(clf_raw.predict(X))
+print(clf_raw.score(X[:6,:], Y[:6]))
 
+result = clf_raw.predict_proba(X)
+
+for gr, prob in enumerate(result[:,0]):
+    if prob > 0.5:
+        star = '***'
+    else:
+        star = ''
+    print('GR'+str(gr+1)+' : P("GR145"st) = %.3f' %prob + star)
+
+plt.show()
+
+## Plot Decision Regions
+#plot_decision_regions_PCA(X_PCA, Y, clf_raw, pca)
