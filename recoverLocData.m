@@ -3,16 +3,16 @@ function [ recoveredLocData ] = recoverLocData( originalLocData )
     % 현재 살펴본 바에 따르면 tracking이 끊기는 경우 X 데이터는 -1, Y 데이터는 481의 값을 취하게 된다.
     % 이러한 값이 중간에 등장하게 되면 그 전후 데이터를 토대로 추측해서 loss가 생긴 부분을 보간한 데이터를 출력한다.
     % 끊긴 부분 양 옆의 데이터의 차이가 크면 에러를 출력한다.
-    % @Knowblesse 2017
+    % @Knowblesse 2018
     
     % argument :
-    % originalLocData cell(2,1);
+    % originalLocData cell(2,2);
     
     
     %% CONSTANTS 
     % 정상적인 데이터의 범위를 지정해 준다.
-    X_RANGE = [200,600];
-    Y_RANGE = [100,400];
+    X_RANGE = [0,350];
+    Y_RANGE = [100,600];
     
     %% Check Data Format
     type = whos('originalLocData');
@@ -31,10 +31,11 @@ function [ recoveredLocData ] = recoverLocData( originalLocData )
     
     for i = 1 : dataLength % 모든 데이터에 대해서
         % Loss point 1 ( 빨간색 XY )
-        if ~and(X_RANGE(1)<originalLocData{1}(i),originalLocData{1}(i) < X_RANGE(2))
-            % X 좌표가 WRONG_X_LOW 보다 작고, (Y 좌표가 WRONG_Y_MAX 보다 크거나 0인 경우)
-            % 대부분의 경우 X 좌표가 -1이고 Y 좌표가 481인 경우가 튕긴 상태인데, 가끔 Y 좌표가 0인 경우가
-            % 나옴. 이 경우를 뽑기 위해서 X는 무지 작고 AND Y는 0 혹은 큰 값인 경우를 감지함.
+        if ~and(...
+                and(X_RANGE(1)<originalLocData{1}(i),originalLocData{1}(i) < X_RANGE(2)),...
+                and(Y_RANGE(1)<originalLocData{2}(i),originalLocData{2}(i) < Y_RANGE(2))...
+                )
+            % X 좌표가 X_RANGE 안에 있지 않거나, Y 좌표가 Y_RANGE 안에 있지 않으면 튕긴상태.
             if wrongFlag_1 == false
                 wrongFlag_1 = true;
                 points_1 = [points_1;[i,0]];
@@ -47,7 +48,11 @@ function [ recoveredLocData ] = recoverLocData( originalLocData )
             end
         end
         % Loss point 2 ( 초록색 XY )
-        if ~and(X_RANGE(1)<originalLocData{3}(i),originalLocData{3}(i) < X_RANGE(2))
+        if ~and(...
+                and(X_RANGE(1)<originalLocData{3}(i),originalLocData{3}(i) < X_RANGE(2)),...
+                and(Y_RANGE(1)<originalLocData{4}(i),originalLocData{4}(i) < Y_RANGE(2))...
+                )
+            % X 좌표가 X_RANGE 안에 있지 않거나, Y 좌표가 Y_RANGE 안에 있지 않으면 튕긴상태.
             if wrongFlag_2 == false
                 wrongFlag_2 = true;
                 points_2 = [points_2;[i,0]];
@@ -99,5 +104,5 @@ function [ recoveredLocData ] = recoverLocData( originalLocData )
     recoveredLocData{2}(points_1(end,1):end) = recoveredLocData{2}(points_1(end,1)-1);
     recoveredLocData{3}(points_2(end,1):end) = recoveredLocData{3}(points_2(end,1)-1);
     recoveredLocData{4}(points_2(end,1):end) = recoveredLocData{4}(points_2(end,1)-1);
-end
 
+end
