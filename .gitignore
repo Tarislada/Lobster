@@ -1,3 +1,5 @@
 *.asv
 /data/*
 PythonCode/.idea/workspace.xml
+
+PythonCode/\.idea/
