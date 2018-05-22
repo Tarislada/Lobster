@@ -1,10 +1,10 @@
-function [ParsedData, Trials, IRs, Licks,Attacks ]=BehavDataParser(targetdir)
+function [ParsedData, Trials, IRs, Licks, Attacks ]=BehavDataParser(targetdir)
 %% BehavDataParser
 % TDT OpenBridge 에서 추출한 파일을 이용해 행동 데이터를 분석한다.
 % 2018 Knowblesse
 %% Constants
-DATALIST = {'ATTK', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing에 필요한 데이터의 목록
-DATAPAIR = [0,      2,      2,      3,      3,      4,      4      ]; % 에러 확인용 값들. 같은 pair 번호를 가지는 데이터 끼리는 크기가 같아야 함.단, 0인경우 신경 안씀.
+DATALIST = {'ATTK', 'ATOF', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing에 필요한 데이터의 목록
+DATAPAIR = [1,      1,      2,      2,      3,      3,      4,      4      ]; % 에러 확인용 값들. 같은 pair 번호를 가지는 데이터 끼리는 크기가 같아야 함.단, 0인경우 신경 안씀.
 
 %% 폴더 선택
 if ~exist('targetdir','var')
@@ -92,26 +92,27 @@ IROF_index = find(strcmp(DATALIST,'IROF'));
 LICK_index = find(strcmp(DATALIST,'LICK'));
 LOFF_index = find(strcmp(DATALIST,'LOFF'));
 ATTK_index = find(strcmp(DATALIST,'ATTK'));
+ATOF_index = find(strcmp(DATALIST,'ATOF'));
 % 데이터 모으기
 Trials = [RAWDATA{TRON_index}, RAWDATA{TROF_index}];
 IRs = [RAWDATA{IRON_index},RAWDATA{IROF_index}];
 Licks = [RAWDATA{LICK_index},RAWDATA{LOFF_index}];
-Attacks = RAWDATA{ATTK_index};
-clearvars TRON_index TROF_index IRON_index IROF_index LICK_index LOFF_index ATTK_index
+Attacks = [RAWDATA{ATTK_index},RAWDATA{ATOF_index}];
+clearvars TRON_index TROF_index IRON_index IROF_index LICK_index LOFF_index ATTK_index ATOF_index
 clearvars RAWDATA
 % 쪼개기
 numTrial = size(Trials,1);
 ParsedData = cell(numTrial,4);
-% +------------------------+----------------+---------------+-----------+
-% | [TRON Time, TROF Time] | [[IRON, IROF]] | [[LICK,LOFF]] | ATTK Time |
-% +------------------------+----------------+---------------+-----------+
+% +------------------------+----------------+---------------+----------------+
+% | [TRON Time, TROF Time] | [[IRON, IROF]] | [[LICK,LOFF]] | [[ATTK, ATOF]] |
+% +------------------------+----------------+---------------+----------------+
 
 %% 시행 단위로 쪼개기
 for i = 1 : numTrial
-    ParsedData{i,1} = Trials(i,:);
+    ParsedData{i,1} = Trials(i,:); % Trial은 그냥 trial 그대로 자름.
     ParsedData{i,2} = IRs(sum(and(IRs>=Trials(i,1), IRs<Trials(i,2)),2) == 2,:) - Trials(i,1);
     ParsedData{i,3} = Licks(sum(and(Licks>=Trials(i,1), Licks<Trials(i,2)),2) == 2,:) - Trials(i,1);
-    ParsedData{i,4} = Attacks(and(Attacks>=Trials(i,1), Attacks<Trials(i,2))) - Trials(i,1);
+    ParsedData{i,4} = Attacks(sum(and(Attacks>=Trials(i,1), Attacks<Trials(i,2)),2) == 2, :) - Trials(i,1);
 end
     
 clearvars DATALIST DATAPAIR i 
