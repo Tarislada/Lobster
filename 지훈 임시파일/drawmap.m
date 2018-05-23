@@ -1,7 +1,6 @@
 function [ ] = drawmap( map, axis_limit, c_axis_limit )
 %hitmap을 그린다.
 
-
 %% 그려지는 영역
 if isempty(axis_limit)
     ax_x = 160 : 580;
