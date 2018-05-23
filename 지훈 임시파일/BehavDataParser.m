@@ -1,6 +1,6 @@
-function [ParsedData, Trials, IRs, Licks, Attacks ]=BehavDataParser(targetdir)
+function [ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser(targetdir)
 %% BehavDataParser
-% TDT OpenBridge 에서 추출한 파일을 이용해 행동 데이터를 분석한다.
+% TDT Open Bridge 에서 추출한 행동 데이터 csv 파일을 불러온다.
 % 2018 Knowblesse
 %% Constants
 DATALIST = {'ATTK', 'ATOF', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing에 필요한 데이터의 목록

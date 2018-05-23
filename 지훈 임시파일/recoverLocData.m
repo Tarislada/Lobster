@@ -1,4 +1,4 @@
-function [ recoveredLocData ] = recoverLocData( originalLocData )
+function [ recoveredLocData ] = recoverLocData( originalLocData, X_RANGE, Y_RANGE )
 % tracking loss로 인한 데이터 손실 부분을 주변 데이터를 토대로 추측해서 재구성.
     % 현재 살펴본 바에 따르면 tracking이 끊기는 경우 X 데이터는 -1, Y 데이터는 481의 값을 취하게 된다.
     % 이러한 값이 중간에 등장하게 되면 그 전후 데이터를 토대로 추측해서 loss가 생긴 부분을 보간한 데이터를 출력한다.
@@ -11,8 +11,13 @@ function [ recoveredLocData ] = recoverLocData( originalLocData )
     
     %% CONSTANTS 
     % 정상적인 데이터의 범위를 지정해 준다.
-    X_RANGE = [0,350];
-    Y_RANGE = [100,600];
+    if ~exist('X_RANGE','var')
+        X_RANGE = [0,350];
+    end
+    
+    if ~exist('Y_RANGE','var')
+        Y_RANGE = [100,600];
+    end
     
     %% Check Data Format
     type = whos('originalLocData');
