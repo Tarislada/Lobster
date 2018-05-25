@@ -11,8 +11,13 @@ function [ recoveredLocData ] = recoverLocData( originalLocData )
     
     %% CONSTANTS 
     % 정상적인 데이터의 범위를 지정해 준다.
-    X_RANGE = [100,360];
-    Y_RANGE = [160,580];
+    if ~exist('X_RANGE','var')
+        X_RANGE = [100,360];
+    end
+    
+    if ~exist('Y_RANGE','var')
+        Y_RANGE = [160,580];
+    end
     
     %% Check Data Format
     type = whos('originalLocData');
@@ -109,42 +114,20 @@ function [ recoveredLocData ] = recoverLocData( originalLocData )
     
     %% Adjust missing secondary coord
 
-XY1 = [recoveredLocData{1} recoveredLocData{2}];
-XY2 = [recoveredLocData{3} recoveredLocData{4}];
+    XY1 = [recoveredLocData{1} recoveredLocData{2}];
+    XY2 = [recoveredLocData{3} recoveredLocData{4}];
 
+    % 두 LED 사이의 거리 계산.
+    D  = sqrt(sum(((XY1 - XY2) .^ 2),2));
+    meanD = mean(D);
+    stdD = std(D);
 
-for j = 1:2
-
-
-
-D  = sqrt(sum(((XY1 - XY2) .^ 2),2));
-meanD = mean(D);
-stdD = std(D);
-
-
-
-for i = 1:length(D)
+    % 거리가 평균보다 1sigma 이상 길다면 XY2 좌표를 XY1 좌표로 치환.
+    XY2(D>meanD+stdD,:) = XY1(D>meanD+stdD,:);
     
-     G1 = XY1(i,:);
-     G2 = XY2(i,:);
- 
-     d = norm(G1 - G2);
-    
-     if d > meanD+stdD
-        XY2(i,:) = XY1(i,:);
-    end
-end
-
-
-
-
-end
-    
-
-
-recoveredLocData{1} = XY1(:,1);
-recoveredLocData{2} = XY1(:,2);
-recoveredLocData{3} = XY2(:,1);
-recoveredLocData{4} = XY2(:,2);
+    recoveredLocData{1} = XY1(:,1);
+    recoveredLocData{2} = XY1(:,2);
+    recoveredLocData{3} = XY2(:,1);
+    recoveredLocData{4} = XY2(:,2);
 
 end
