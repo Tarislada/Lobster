@@ -1,9 +1,11 @@
 %% Gamble Rats LOB sessions event reader
 
 % 모든 trial을 TRON, First IR 등으로 align.
-% align된 데이터를 모든 trial에 대해서 합침 => Nt
-% 이 데이터를 .mat 파일로 저장.
-% Plot 그리는 기능은 제외
+% align된 데이터를 모든 trial에 대해서 합친 변수 => Nt
+% Nt 를 정규화 시킨 데이터를 각 정렬한 event의 이름을 따서 Z struct 내에 저장.
+% 예 : IROF를 기준으로 정렬한 데이터의 Nt의 Z 값 은 Z.IROF 에 저장됨.
+% 이 Z 값을 .mat 파일로 저장.
+% Plot 그리는 기능은 지움.
 
 if exist('targetdir','var')
     [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
