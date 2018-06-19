@@ -1,16 +1,22 @@
 %% Gamble Rats LOB sessions event reader
 
-% clear
-% clc
+% 단독으로 돌릴시에 GambleRatBehavParser에서 .csv event 파일이 들어있는 경로를 물어봄.
+% Imlazy 스크립트 내에서 돌릴 시에는 targetdir에 자동으로 pathname 이 들어가므로, 
+% 해당 정보를 사용해서 돌림.
 
-%open directory
-% thefolder = uigetdir;
-% 
-% 
-% thefiles = dir(thefolder);
+% 선휘선배 코드 A3_GR_PSTH_v2 에서 변경사항
+% whitespace(엔터 등등) 제거 및 indent 맞춤
+% 반복적으로 사용되는 코드 제거 및 속도 최적화
+% Imlazy script를 위해서 GambleRatBehavParser를 단독으로도, script 내에서도 돌릴 수 있도록 변경.
+% 이미지 자동저장.
+% 첫 trial에서 IRON, IROF, Attack 데이터가 없는 경우 해당 분석은 하지 않음.
 
-[TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
-% [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
+if exist('targetdir','var')
+    [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
+else
+    [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
+    neuronname = 'Neuron.mat';
+end
 
 %% Overall firing rate change analysis
 
@@ -199,8 +205,6 @@ if ltr ~= 0
 end
 
 saveas(1,[neuronname(1:end-4), '_TRON.png'],'png');
-
-Z = zscore(Nt);
 
 
 %% Only Lick trials PRTH (peri response t histogram)
