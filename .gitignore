@@ -1,3 +1,4 @@
 *.asv
 /sampledata/*
-/GR7/data*
+/data/*
+PythonCode/\.idea/
