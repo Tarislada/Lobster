@@ -10,14 +10,14 @@
 % Imlazy script를 위해서 GambleRatBehavParser를 단독으로도, script 내에서도 돌릴 수 있도록 변경.
 % 이미지 자동저장.
 % 첫 trial에서 IRON, IROF, Attack 데이터가 없는 경우 해당 분석은 하지 않음.
-
-if exist('targetdir','var')
-    [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
-else
-    [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
-    neuronname = 'Neuron.mat';
+if ~exist('noBehavParser','var')
+    if exist('targetdir','var')
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
+    else
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
+        neuronname = 'Neuron.mat';
+    end
 end
-
 %% Overall firing rate change analysis
 
 figure(9);

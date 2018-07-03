@@ -103,6 +103,7 @@ clearvars RAWDATA
 % ÂÉ°³±â
 numTrial = size(Trials,1);
 ParsedData = cell(numTrial,4);
+
 % +------------------------+----------------+---------------+----------------+
 % | [TRON Time, TROF Time] | [[IRON, IROF]] | [[LICK,LOFF]] | [[ATTK, ATOF]] |
 % +------------------------+----------------+---------------+----------------+

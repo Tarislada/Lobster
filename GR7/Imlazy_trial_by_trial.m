@@ -14,14 +14,13 @@ end
 [ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser();
 AnalyticValueExtractor;
 
-%% behavior type chart 그려주기.
-
+%% Behavior type chart 그려주기.
+tabulate(behaviorResult);
 
 %% 나온 데이터에서 어떤 behaviorResult 만 선택할지 결정
 BEHAV_TYPE = 'A';
 
-
-
+TRON
 
 %% Imlazy를 돌림.
 for f = 1 : numel(Paths)
@@ -30,7 +29,16 @@ for f = 1 : numel(Paths)
     donotdrawA2 = true; % A2에서 이 파트가 있으면 뒤에서 그래프를 그리지 않음.
     A2_GR_singleUnit_anlyzer_JH;
     
+    % A3에 들어갈 항목으로 따로 데이터를 만들어줌.
     
+    TRON
+    TROF
+    IRON
+    IROF
+    LICK
+    LOFF
+    ATTK
+    ATOF
     
     A3_GR_PSTH_v3_JH;
     clearvars -except filename pathname Paths targetdir f Z
