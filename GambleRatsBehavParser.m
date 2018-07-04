@@ -93,10 +93,10 @@ LICK_index = find(strcmp(DATALIST,'LICK'));
 LOFF_index = find(strcmp(DATALIST,'LOFF'));
 ATTK_index = find(strcmp(DATALIST,'ATTK'));
 ATOF_index = find(strcmp(DATALIST,'ATOF'));
-BLON_index = find(strcmp(DATALIST, 'BLON'));
-BLOF_index = find(strcmp(DATALIST, 'BLOF'));
-% 데이터 모으기
+BLON_index = find(strcmp(DATALIST,'BLON'));
+BLOF_index = find(strcmp(DATALIST,'BLOF'));
 
+% 데이터 모으기
 TRON = RAWDATA{TRON_index};
 TROF = RAWDATA{TROF_index};
 IRON = RAWDATA{IRON_index};

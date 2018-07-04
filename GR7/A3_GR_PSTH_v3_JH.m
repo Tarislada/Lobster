@@ -7,10 +7,16 @@
 % 이 Z 값을 .mat 파일로 저장.
 % Plot 그리는 기능은 지움.
 
-if exist('targetdir','var')
-    [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
-else
-    [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
+
+% noBehavParser 변수가 있으면 GambleRat 함수를 돌리지 않음.
+% targetdir 변수가 있으면 따로 EVENT 폴더의 위치를 묻지 않음.
+if ~exist('noBehavParser','var')
+    if exist('targetdir','var')
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
+    else
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
+        neuronname = 'Neuron.mat';
+    end
 end
 
 %% exp conditions
