@@ -1,5 +1,9 @@
 %% 추출된 aligned 된 mat 파일을 읽어서 하나의 큰 파일로 만들기.
 % 그리고 PCA 분석하기.
+% Imlazy_createmat.m 이나 Imlazy_trial_by_trial.m 에서 생성하는 aligned.mat 데이터가
+% 필요.
+% 각각의 aligned.mat 은 하나의 neuron에 대응하는 데이터임.
+% 이 코드를 실행하면 여러 aligned.mat 파일을 선택하도록 하고, 이 데이터로 PCA 분석을 진행함.
 
 
 %% 분석할 .mat 파일 선택
