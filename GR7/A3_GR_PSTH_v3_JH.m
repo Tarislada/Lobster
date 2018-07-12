@@ -19,6 +19,8 @@ if ~exist('noBehavParser','var')
     end
 end
 
+clearvars Z
+
 %% exp conditions
 
 %  attack at 6s : 80% 
