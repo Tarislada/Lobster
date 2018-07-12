@@ -110,7 +110,7 @@ for j = 1:length(TRON)
 end
 
 if ltr ~= 0
-    edges = -6:0.1:12; %from -6 befor first lick to 12 after trial on
+    edges = -4:0.1:4; %from -4 befor first lick to 4 after trial on
     [N, edges] = histcounts(s_tmp_stack, edges);
     Nt = N/ltr;
 end
@@ -149,8 +149,7 @@ for j = 1:length(TRON)
 end
 
 if ltr ~=0
-
-    edges = -3:.1:10; %from -6 befor last lick to 6 after last lick
+    edges = -4:0.1:4;
     [N, edges] = histcounts(s_tmp_stack, edges);
     Nt = N/ltr;
 end
@@ -182,7 +181,7 @@ for j = 1:length(TRON)
 end
 
 if ltr ~= 0
-    edges = -6:.1:12; %from -6 befor first lick to 12 after first lick
+    edges = -4:0.1:4;
     [N, edges] = histcounts(s_tmp_stack, edges);
     Nt = N/ltr;
 
@@ -218,7 +217,7 @@ end
 
 if ltr ~= 0
     
-    edges = -6:.1:6; %from -6 befor last lick to 6 after last lick
+    edges = -4:0.1:4;
     [N, edges] = histcounts(s_tmp_stack, edges);
     Nt = N/ltr;
 end
@@ -258,7 +257,7 @@ end
 
 if ltr ~=0
 
-    edges = -10:.1:5; %from -10 befor last lick to 5 after last
+    edges = -4:0.1:4;
     [N, edges] = histcounts(s_tmp_stack, edges);
     Nt = N/ltr;
 end
@@ -297,7 +296,7 @@ end
 
 if ltr ~=0
 
-    edges = -10:.1:5; %from -10 befor last lick to 5 after last
+    edges = -4:0.1:4;
     [N, edges] = histcounts(s_tmp_stack, edges);
     Nt = N/ltr;
 end
@@ -331,7 +330,7 @@ end
 
 if ltr ~=0
     
-    edges = -10:.1:5; %from -10 befor last lick to 5 after attack
+    edges = -4:0.1:4;
     [N, edges] = histcounts(s_tmp_stack, edges);
     Nt = N/ltr;
 
