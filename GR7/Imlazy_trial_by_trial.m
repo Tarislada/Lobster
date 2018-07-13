@@ -18,7 +18,7 @@ AnalyticValueExtractor;
 tabulate(behaviorResult);
 
 %% 나온 데이터에서 어떤 behaviorResult 만 선택할지 결정
-BEHAV_TYPE = 'A';
+BEHAV_TYPE = 'E';
 
 %% 기존 선휘선배가 짜두신 양식에 맞추기 위해서 새로운 변수를 생성.
 % BehavDataParser의 경우 ParsedData 안에 모든 데이터를 담는데,

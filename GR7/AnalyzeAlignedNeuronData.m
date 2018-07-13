@@ -64,18 +64,21 @@ clearvars Neurons n
 % imagesc(TROF_mat);
 
 %% Constants
-varnames = {'TRON_mat','IRON_mat','LICK_mat','LOFF_mat','IROF_mat','ATTK_mat','TROF_mat'};
-zeroline = [61,31,61,61,101,101,101]; % A3에서 edges를 기준으로 0인 지점의 index 값. A3 코드가 바뀌면 바꿔줘야 함!!!
-xedges = {-6:0.1:12, -3:.1:10, -6:.1:12, -6:.1:6, -10:.1:5, -10:.1:5, -10:.1:5}; 
+%varnames = {'TRON_mat','IRON_mat','LICK_mat','LOFF_mat','IROF_mat','ATTK_mat','TROF_mat'};
+varnames = {'LOFF_mat','IROF_mat','ATTK_mat'};
+zeroline = 41; % A3에서 edges를 기준으로 0인 지점의 index 값. A3 코드가 바뀌면 바꿔줘야 함!!!
+xedges = -4:0.1:4; 
 
 N = 4; % 사용하는 Component의 수
+KernelSize = 10; % moving average의 크기
 
 %% PCA 돌리고 그 결과값(loading)에 따라서 재정렬)
 Screensize = get(groot, 'Screensize'); % 좌에 정렬된 그래프, 우에 eigenvector를 표시하기 위한 부분.
 
 for events = 1 : numel(varnames)
     % PCA 돌리기. 이 부분은 논문의 코드와 정확히 일치함.
-    X = eval(varnames{events});
+    X = eval(varnames{events}); % 각 조건별 데이터 불러오기
+    X = movmean(X,KernelSize,2); % X축으로 이동하며(열로 이동하며) moving average)
     [u, s, v] = svd(X',0);
     U = u(:,1:N); % eigenvenctors
     l = diag(s).^2/(numNeuron-1); % eigenvalues
@@ -103,7 +106,7 @@ for events = 1 : numel(varnames)
         imagesc(X(sortindex,:));
         colormap jet;
         hold on;
-        line([zeroline(events), zeroline(events)],[0, numNeuron],'Color','r');
+        line([zeroline, zeroline],[0, numNeuron],'Color','r');
     end
 end
         
