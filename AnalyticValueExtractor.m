@@ -69,6 +69,8 @@ for trial = 1 : size(ParsedData,1)
         end
     end
 end
+
+clearvars Attack Attacks IAttackIROFI IIRI ILicksI IRs k Licks MIN_1MIN_TIMEOUT_DURATION MIN_IR_CLUSTER_INTERVAL MIN_LICK_CLUSTER_INTERVAL numTrial trial Trials Trial
         
 
 
