@@ -1,7 +1,7 @@
 %% AnalyticValueExtractor
 % Parsed 데이터 존재 확인
 if ~exist('ParsedData')
-    error('Error.\nBehavDataParser를 먼저 돌려주세요.');
+    error('Error.BehavDataParser를 먼저 돌려주세요.');
 end
 
 %% Constants

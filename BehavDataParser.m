@@ -10,7 +10,7 @@ DATAPAIR = [1,      1,      2,      2,      3,      3,      4,      4      ]; % 
 if ~exist('targetdir','var')
     currfolder = uigetdir();
     if currfolder == 0
-        error('Error.\n데이터 파일 폴더를 선택하지 않으셨습니다.','');
+        error('Error.데이터 파일 폴더를 선택하지 않으셨습니다.','');
     end
     targetdir = currfolder;
 else
