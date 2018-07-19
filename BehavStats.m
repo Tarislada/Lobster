@@ -1,9 +1,28 @@
 %% Plot Behav Stats
 % BehavDataParser를 돌린 후에 해당 데이터를 사용, 그래프 등을 출력해주는 스크립트
 
-[ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser();
-AnalyticValueExtractor;
+%% 행동 데이터 로드
+NUM_FILES = 3;
+ParsedData_ = {};
+behaviorResult_ = [];
+numIRClusters_ = [];
+numLickClusters_ = [];
+for f = 1 : NUM_FILES
+    [ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser();
+    AnalyticValueExtractor;
+    ParsedData_ = [ParsedData_;ParsedData];
+    behaviorResult_ = [behaviorResult_; behaviorResult];
+    numIRClusters_ = [numIRClusters_; numIRClusters];
+    numLickClusters_ = [numLickClusters_; numLickClusters];
+end
 
+ParsedData = ParsedData_;
+behaviorResult = behaviorResult_;
+numIRClusters = numIRClusters_;
+numLickClusters = numLickClusters_;
+
+clearvars ParsedData_ behaviorResult_ numIRClusters_ numLickClusters_;
+    
 %% Data Array Format
 % +-----+-----+-------+-------+--------+----------------+
 % |  1  |  2  |   3   |   4   |   5    |       6        |
@@ -52,64 +71,69 @@ StatArray(:,6) = InputArray(:,5) - InputArray(:,4);
 StatArray(:,7) = InputArray(:,5) - InputArray(:,2);
 StatArray(:,8) = numIRClusters;
 StatArray(:,9) = numLickClusters;
-StatArray(:,10) = InputArray(:,6);
-
+StatArray(:,10) = InputArray(:,2) - InputArray(:,3);
+StatArray(:,11) = InputArray(:,6);
 %% Draw Figures
 Monitors = get(groot, 'MonitorPositions');
 
 %% First IR
 fig1 = figure('Name','First IR');
 set(fig1,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(1, [0,20,-inf,inf], numTrial, StatArray);
+draw6graph(1, [0,20,-inf,inf], 0:1:20,numTrial, StatArray);
 
 %% Length IR
 fig2 = figure('Name','Length between the first and the last IR');
 set(fig2,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(2, [0,20,-inf,inf], numTrial, StatArray);
+draw6graph(2, [0,15,-inf,inf], 0:0.5:15, numTrial, StatArray);
 
 %% First Lick
 fig3 = figure('Name','First Lick');
 set(fig3,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(3, [0,20,-inf,inf], numTrial, StatArray);
+draw6graph(3, [0,30,-inf,inf], 0:1:30, numTrial, StatArray);
 
 %% Length Lick
 fig4 = figure('Name','Length between the first and the last Lick');
 set(fig4,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(4, [0,10,-inf,inf], numTrial, StatArray);
+draw6graph(4, [0,7,-inf,inf], 0:0.1:7, numTrial, StatArray);
 
 %% fLick - fIR
 fig5 = figure('Name','Length between the first Lick and the first IR');
 set(fig5,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(5, [0,10,-inf,inf], numTrial, StatArray);
+draw6graph(5, [0,10,-inf,inf], 0:0.1:10, numTrial, StatArray);
 
 %% Attack - lLick
 fig6 = figure('Name','Length between the Attack and the last Lick');
 set(fig6,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(6, [-1,6,-inf,inf], numTrial, StatArray);
+draw6graph(6, [-0.5,6,-inf,inf],-0.5:0.1:6, numTrial, StatArray);
 
 %% Attack - lIR
 fig7 = figure('Name','Length between the Attack and the last IR');
 set(fig7,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(7, [-1,6,-inf,inf], numTrial, StatArray);
+draw6graph(7, [-0.5,6,-inf,inf], -0.5:0.1:6, numTrial, StatArray);
 
 %% IR Cluster
 fig8 = figure('Name','IR clusters');
 set(fig8,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(8, [0,5,-inf,inf], numTrial, StatArray);
+draw6graph(8, [0,5,-inf,inf], 0:5, numTrial, StatArray);
 
 %% Lick Cluster
 fig9 = figure('Name','Lick clusters');
 set(fig9,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
-draw6graph(9, [0,5,-inf,inf], numTrial, StatArray);
+draw6graph(9, [0,5,-inf,inf], 0:6, numTrial, StatArray);
+
+%% lIR - fLick
+fig10 = figure('Name','Length between the first Lick and the last IR');
+set(fig10,'Position',[1,1,Monitors(1,3),Monitors(1,4)]);
+draw6graph(10, [0,7,-inf,inf], 0:0.1:7, numTrial, StatArray);
 
 %% Draw Composition Data
 fig_C = figure('Name','Trial Composition');
-set(fig_C,'Position',[1,1,1100,300]);
+set(fig_C,'Position',[1,1,1200,300]);
 movegui(fig_C,'center');
 
 % sequential behav pattern
 for i = 1 : numTrial
-    switch(StatArray(i,10))
+    switch(StatArray(i,11))
         case 0
             barh(2,numTrial-i+1,'b');
             hold on;
@@ -127,10 +151,10 @@ end
 
 % behav pattern composition
 tempdat = [...
-    sum(StatArray(:,10) == 0),... % Avoid
-    sum(StatArray(:,10) == 1),... % Escape
-    sum(StatArray(:,10) == 2),... % Give Up
-    sum(StatArray(:,10) == 3),... % 1Min Out
+    sum(StatArray(:,11) == 0),... % Avoid
+    sum(StatArray(:,11) == 1),... % Escape
+    sum(StatArray(:,11) == 2),... % Give Up
+    sum(StatArray(:,11) == 3),... % 1Min Out
     ];
 compdat = cumsum(tempdat);
 
@@ -151,66 +175,73 @@ title('Trial Composition');
 xlabel('trial');
 
 % 사용자 편의를 위해서 버튼 만들기
-figs = {fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, fig9};
+figs = {fig1, fig2, fig3, fig4, fig5, fig6, fig7, fig8, fig9, fig10};
 
-for i = 1 : 9
+for i = 1 : 10
     figs{i}.Visible = 'off';
 end
 
+ui_leftstart = 180;
+ui_interval = 90;
 
 pushbutton_1 = uicontrol('Style','pushbutton','String','First IR',...
-    'Position',[160,60,80,30],...
+    'Position',[ui_leftstart,60,80,30],...
     'Callback',@figvis,...
     'UserData',{1,figs} ...
     );
 pushbutton_2 = uicontrol('Style','pushbutton','String','IR Length',...
-    'Position',[160+90*1,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*1,60,80,30],...
     'Callback',@figvis,...
     'UserData',{2,figs} ...
     );
 pushbutton_3 = uicontrol('Style','pushbutton','String','First Lick',...
-    'Position',[160+90*2,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*2,60,80,30],...
     'Callback',@figvis,...
     'UserData',{3,figs} ...
     );
 pushbutton_4 = uicontrol('Style','pushbutton','String','Lick Length',...
-    'Position',[160+90*3,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*3,60,80,30],...
     'Callback',@figvis,...
     'UserData',{4,figs} ...
     );
 pushbutton_5 = uicontrol('Style','pushbutton','String','IR to Lick',...
-    'Position',[160+90*4,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*4,60,80,30],...
     'Callback',@figvis,...
     'UserData',{5,figs} ...
     );
 pushbutton_6 = uicontrol('Style','pushbutton','String','lLick to Attk',...
-    'Position',[160+90*5,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*5,60,80,30],...
     'Callback',@figvis,...
     'UserData',{6,figs} ...
     );
 pushbutton_7 = uicontrol('Style','pushbutton','String','lIR to Attk',...
-    'Position',[160+90*6,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*6,60,80,30],...
     'Callback',@figvis,...
     'UserData',{7,figs} ...
     );
 pushbutton_8 = uicontrol('Style','pushbutton','String','IR Cluster',...
-    'Position',[160+90*7,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*7,60,80,30],...
     'Callback',@figvis,...
     'UserData',{8,figs} ...
     );
 pushbutton_9 = uicontrol('Style','pushbutton','String','Lick Cluster',...
-    'Position',[160+90*8,60,80,30],...
+    'Position',[ui_leftstart+ui_interval*8,60,80,30],...
     'Callback',@figvis,...
     'UserData',{9,figs} ...
     );
+pushbutton_10 = uicontrol('Style','pushbutton','String','fLick to lIR',...
+    'Position',[ui_leftstart+ui_interval*9,60,80,30],...
+    'Callback',@figvis,...
+    'UserData',{10,figs} ...
+    );
 
 %% Define Repetitive Function
-function draw6graph(type, axis_, numTrial, StatArray)
+function draw6graph(type, axis_, bin_, numTrial, StatArray)
     subplot(2,3,1);
     xbar = 1:numTrial;
-    barh(flipud(xbar(StatArray(:,10) == 0)),flipud(StatArray(StatArray(:,10) == 0,type)),'b');
+    barh(flipud(xbar(StatArray(:,11) == 0)),flipud(StatArray(StatArray(:,11) == 0,type)),'b');
     hold on;
-    barh(flipud(xbar(StatArray(:,10) == 1)),flipud(StatArray(StatArray(:,10) == 1,type)),'r');
+    barh(flipud(xbar(StatArray(:,11) == 1)),flipud(StatArray(StatArray(:,11) == 1,type)),'r');
     hold off;
     axis(axis_);
     title('All Trials');
@@ -222,12 +253,18 @@ function draw6graph(type, axis_, numTrial, StatArray)
     legend({'avoid','escape'});
 
     subplot(2,3,4);
-    histogram(StatArray(:,type));
+    histogram(StatArray(:,type),bin_);
+    axis(axis_);
     xlabel('sec');
     
     % Avoid trial graph
     subplot(2,3,2);
-    barh(flipud(StatArray(StatArray(:,10) == 0,type)),'b');
+    barh(flipud(StatArray(StatArray(:,11) == 0,type)),'b');
+    line([mean(StatArray(StatArray(:,11) == 0,type)),mean(StatArray(StatArray(:,11) == 0,type))],...
+        get(gca,'YLim'),'Color','k');
+    temp = get(gca,'YLim');
+    text(mean(StatArray(StatArray(:,11) == 0,type)),temp(2)/2,num2str(mean(StatArray(StatArray(:,11) == 0,type))),'FontSize',15);
+    axis(axis_);
     title('Avoid');
     xlabel('sec');
     ylabel('trials');
@@ -235,7 +272,12 @@ function draw6graph(type, axis_, numTrial, StatArray)
 
     % Escape trial graph
     subplot(2,3,3);
-    barh(flipud(StatArray(StatArray(:,10) == 1,type)),'r');
+    barh(flipud(StatArray(StatArray(:,11) == 1,type)),'r');
+        line([mean(StatArray(StatArray(:,11) == 1,type)),mean(StatArray(StatArray(:,11) == 1,type))],...
+        get(gca,'YLim'),'Color','k');
+    temp = get(gca,'YLim');
+    text(mean(StatArray(StatArray(:,11) == 1,type)),temp(2)/2,num2str(mean(StatArray(StatArray(:,11) == 1,type))),'FontSize',15);
+    axis(axis_);
     title('Escape');
     xlabel('sec');
     ylabel('trials');
@@ -243,17 +285,19 @@ function draw6graph(type, axis_, numTrial, StatArray)
 
     % Avoid Histo
     subplot(2,3,5);
-    histogram(StatArray(StatArray(:,10) == 0,type));
+    histogram(StatArray(StatArray(:,11) == 0,type),bin_);
+    axis(axis_);
     xlabel('sec');
 
     % Escape Histo
     subplot(2,3,6);
-    histogram(StatArray(StatArray(:,10) == 1,type));
+    histogram(StatArray(StatArray(:,11) == 1,type),bin_);
+    axis(axis_);
     xlabel('sec');          
 end
-function figvis(hObject, eventdata, handles)
+function figvis(hObject, ~, ~)
 figs = hObject.UserData{2};
-for i = 1 : 9
+for i = 1 : 10
     figs{i}.Visible = 'off';
 end
     figs{hObject.UserData{1}}.Visible = 'on';
