@@ -2,7 +2,7 @@
 % BehavDataParser를 돌린 후에 해당 데이터를 사용, 그래프 등을 출력해주는 스크립트
 
 %% 행동 데이터 로드
-NUM_FILES = 3;
+NUM_FILES = 1;
 ParsedData_ = {};
 behaviorResult_ = [];
 numIRClusters_ = [];
@@ -135,16 +135,16 @@ movegui(fig_C,'center');
 for i = 1 : numTrial
     switch(StatArray(i,11))
         case 0
-            barh(2,numTrial-i+1,'b');
+            barh(2,numTrial-i+1,[0.507,0.789,0.984]); % Avoid 인 경우 파란색
             hold on;
         case 1
-            barh(2,numTrial-i+1,'r');
+            barh(2,numTrial-i+1,[0.965,0.527,0.602]); % Escape 인 경우 빨간색
             hold on;
         case 2
-            barh(2,numTrial-i+1,'FaceColor',[0.8,0.8,0.8]);
+            barh(2,numTrial-i+1,'FaceColor',[0.8,0.8,0.8]); % Give Up 인 경우 회색
             hold on;
         case 3
-            barh(2,numTrial-i+1,'k');
+            barh(2,numTrial-i+1,'k'); % 1Min Out 인 경우 흰색
             hold on;
     end
 end
@@ -160,8 +160,8 @@ compdat = cumsum(tempdat);
 
 barh(1,compdat(4),'k');
 barh(1,compdat(3),'FaceColor',[0.8,0.8,0.8])
-barh(1,compdat(2),'r');
-barh(1,compdat(1),'b');
+barh(1,compdat(2),[0.965,0.527,0.602]);
+barh(1,compdat(1),[0.507,0.789,0.984]);
 
 text(tempdat(1)/2, 1,'A','FontSize',12,'FontWeight','bold','Color','w');
 text(tempdat(2)/2 + compdat(1), 1,'E','FontSize',12,'FontWeight','bold','Color','w');
@@ -239,9 +239,9 @@ pushbutton_10 = uicontrol('Style','pushbutton','String','fLick to lIR',...
 function draw6graph(type, axis_, bin_, numTrial, StatArray)
     subplot(2,3,1);
     xbar = 1:numTrial;
-    barh(flipud(xbar(StatArray(:,11) == 0)),flipud(StatArray(StatArray(:,11) == 0,type)),'b');
+    barh(flipud(xbar(StatArray(:,11) == 0)),flipud(StatArray(StatArray(:,11) == 0,type)),[0.507,0.789,0.984]);
     hold on;
-    barh(flipud(xbar(StatArray(:,11) == 1)),flipud(StatArray(StatArray(:,11) == 1,type)),'r');
+    barh(flipud(xbar(StatArray(:,11) == 1)),flipud(StatArray(StatArray(:,11) == 1,type)),[0.965,0.527,0.602]);
     hold off;
     axis(axis_);
     title('All Trials');
@@ -259,7 +259,7 @@ function draw6graph(type, axis_, bin_, numTrial, StatArray)
     
     % Avoid trial graph
     subplot(2,3,2);
-    barh(flipud(StatArray(StatArray(:,11) == 0,type)),'b');
+    barh(flipud(StatArray(StatArray(:,11) == 0,type)),[0.507,0.789,0.984]);
     line([mean(StatArray(StatArray(:,11) == 0,type)),mean(StatArray(StatArray(:,11) == 0,type))],...
         get(gca,'YLim'),'Color','k');
     temp = get(gca,'YLim');
@@ -272,7 +272,7 @@ function draw6graph(type, axis_, bin_, numTrial, StatArray)
 
     % Escape trial graph
     subplot(2,3,3);
-    barh(flipud(StatArray(StatArray(:,11) == 1,type)),'r');
+    barh(flipud(StatArray(StatArray(:,11) == 1,type)),[0.965,0.527,0.602]);
         line([mean(StatArray(StatArray(:,11) == 1,type)),mean(StatArray(StatArray(:,11) == 1,type))],...
         get(gca,'YLim'),'Color','k');
     temp = get(gca,'YLim');
