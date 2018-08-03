@@ -1,11 +1,10 @@
 %% 텍스트 파일에서 데이터를 가져옵니다.
 % open units exported in 'txt' file
 
-clc
 clear
 
 
-[FileName,PathName] = uigetfile;
+[FileName,PathName] = uigetfile('.txt');
 
 
 %% reset variables
@@ -162,7 +161,7 @@ end
 
 Filename = strsplit(FileName,'.');
 Filename = strcat(Filename(1),'_UNITS');
-save(Filename{1},'MU')
+save([PathName,Filename{1}],'MU')
 %% Look into each unit
 
 Unitname = strsplit(FileName,'.');
@@ -171,7 +170,7 @@ d = 0;
 
 
 % isolate and extract single unit data!
-
+numunit = 0; % 사용한 유닛 수 체크용
 for k=1:size(MU,1)*size(MU,2)
 
 if isempty(MU{k}) == 1
@@ -185,11 +184,15 @@ if isempty(MU{k}) == 0
     SU = MU{k};
     
     Unit = strcat(Unitname,'_',num2str(k-d));
-    save(Unit{1},'SU')
+    save([PathName,Unit{1}],'SU')
+    numunit = numunit + 1 ; % 이후 fprintf 문에서 파일이 몇개 만들어졌는지 출력하기 위함.
     
 end
 
 end
+
+fprintf('----------A1_GR_UNITS_read_v2----------\n');
+fprintf('%s 위치에 \n총 %d 개의 파일이 생성되었습니다.\n',PathName,numunit);
 
     
 
