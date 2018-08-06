@@ -24,6 +24,12 @@ for f = 1 : numel(Paths)
     A2_GR_singleUnit_anlyzer_JH;
     A3_GR_PSTH_v3_JH;
     clearvars -except filename pathname Paths targetdir f Z
-    save([filename{f}(1:end-4),'___aligned.mat'],'Z');
+    if exist(strcat(pathname,'aligned'),'dir') == 0 % aligned 폴더가 존재하지 않으면
+        mkdir(strcat(pathname,'aligned')); % 만들어줌
+    end
+    save([pathname,'\aligned\',filename{f}(1:end-4),'___aligned.mat'],'Z');
     clearvars Z
 end
+
+fprintf('====================================================\n');
+fprintf('%d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned'));
