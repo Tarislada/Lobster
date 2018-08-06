@@ -12,9 +12,9 @@
 % targetdir 변수가 있으면 따로 EVENT 폴더의 위치를 묻지 않음.
 if ~exist('noBehavParser','var')
     if exist('targetdir','var')
-        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF]=GambleRatsBehavParser(targetdir);
     else
-        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF]=GambleRatsBehavParser();
         neuronname = 'Neuron.mat';
     end
 end

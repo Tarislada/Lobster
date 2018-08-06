@@ -3,8 +3,8 @@ function [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRats
 % TDT OpenBridge 에서 추출한 파일을 이용해 행동 데이터를 분석한다.
 % 2018 Knowblesse
 %% Constants
-DATALIST = {'ATTK', 'ATOF', 'BLON', 'BLOF', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing에 필요한 데이터의 목록
-DATAPAIR = [0,         0,      1,      1,      2,      2,      3,      3,      4,      4      ]; % 에러 확인용 값들. 같은 pair 번호를 가지는 데이터 끼리는 크기가 같아야 함.단, 0인경우 신경 안씀.
+DATALIST = {'ATTK', 'ATOF', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing에 필요한 데이터의 목록
+DATAPAIR = [0,       0,      2,      2,      3,      3,      4,      4      ]; % 에러 확인용 값들. 같은 pair 번호를 가지는 데이터 끼리는 크기가 같아야 함.단, 0인경우 신경 안씀.
 
 %% 폴더 선택
 if ~exist('targetdir','var')
@@ -93,8 +93,6 @@ LICK_index = find(strcmp(DATALIST,'LICK'));
 LOFF_index = find(strcmp(DATALIST,'LOFF'));
 ATTK_index = find(strcmp(DATALIST,'ATTK'));
 ATOF_index = find(strcmp(DATALIST,'ATOF'));
-BLON_index = find(strcmp(DATALIST,'BLON'));
-BLOF_index = find(strcmp(DATALIST,'BLOF'));
 
 % 데이터 모으기
 TRON = RAWDATA{TRON_index};
@@ -105,10 +103,8 @@ LICK = RAWDATA{LICK_index};
 LOFF = RAWDATA{LOFF_index};
 ATTK = RAWDATA{ATTK_index};
 ATOF = RAWDATA{ATOF_index};
-BLON = RAWDATA{BLON_index};
-BLOF = RAWDATA{BLOF_index};
 
-clearvars TRON_index TROF_index IRON_index IROF_index LICK_index LOFF_index ATTK_index ATOF_index BLON_index BLOF_index
+clearvars TRON_index TROF_index IRON_index IROF_index LICK_index LOFF_index ATTK_index ATOF_index
 clearvars RAWDATA
 
 
