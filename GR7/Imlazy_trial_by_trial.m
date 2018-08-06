@@ -11,7 +11,12 @@ if (ischar(Paths))
 end
 
 %% EVENT 파일이 있는 곳을 선택해줌.
-[ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser();
+if exist(strcat(pathname,'EVENTS'),'dir') == 7 % 같은 위치에 EVENTS 폴더가 있음
+    targetdir = strcat(pathname,'EVENTS');
+else
+    targetdir = uigetdir(); % 같은 위치에 EVENT 폴더가 없으면 사용자에게 물어봄.
+end
+[ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser(targetdir);
 AnalyticValueExtractor;
 
 %% Behavior type chart 그려주기.
@@ -58,6 +63,11 @@ for f = 1 : numel(Paths)
     A2_GR_singleUnit_anlyzer_JH;
     A3_GR_PSTH_v3_JH;
     clearvars -except filename pathname Paths targetdir f Z BEHAV_TYPE TRON TROF IRON IROF LICK LOFF ATTK ATOF
-    save([filename{f}(1:end-4),'_',BEHAV_TYPE,'___aligned.mat'],'Z');
+    if exist(strcat(pathname,'aligned_',BEHAV_TYPE),'dir') == 0 % aligned 폴더가 존재하지 않으면
+        mkdir(strcat(pathname,'aligned_',BEHAV_TYPE)); % 만들어줌
+    end
+    save([pathname,'\aligned_',BEHAV_TYPE,'\',filename{f}(1:end-4),'_',BEHAV_TYPE,'___aligned.mat'],'Z');
     clearvars Z
 end
+fprintf('====================================================\n');
+fprintf('%d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned_',BEHAV_TYPE));
