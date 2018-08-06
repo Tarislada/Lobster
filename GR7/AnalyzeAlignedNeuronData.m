@@ -8,6 +8,9 @@
 
 %% 분석할 .mat 파일 선택
 [filename, pathname] = uigetfile('.mat', 'MultiSelect', 'on');
+if isequal(filename,0)
+    return;
+end
 Paths = strcat(pathname,filename);
 if (ischar(Paths))
     Paths = {Paths};
@@ -66,7 +69,7 @@ clearvars Neurons n
 %% Constants
 %varnames = {'TRON_mat','IRON_mat','LICK_mat','LOFF_mat','IROF_mat','ATTK_mat','TROF_mat'};
 varnames = {'LOFF_mat','IROF_mat','ATTK_mat'};
-zeroline = 41; % A3에서 edges를 기준으로 0인 지점의 index 값. A3 코드가 바뀌면 바꿔줘야 함!!!
+zeroline = 40; % A3에서 edges를 기준으로 0인 지점의 index 값. A3 코드가 바뀌면 바꿔줘야 함!!!
 xedges = -4:0.1:4; 
 
 N = 4; % 사용하는 Component의 수
