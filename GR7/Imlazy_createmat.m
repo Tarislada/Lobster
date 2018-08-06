@@ -5,6 +5,9 @@
 % 향후 PCA 분석을 위함.
 
 [filename, pathname] = uigetfile('.mat', 'MultiSelect', 'on');
+if isequal(filename,0)
+    return;
+end
 Paths = strcat(pathname,filename);
 if (ischar(Paths))
     Paths = {Paths};
@@ -15,6 +18,9 @@ if exist(strcat(pathname,'EVENTS'),'dir') == 7 % 같은 위치에 EVENTS 폴더가 있음
     targetdir = strcat(pathname,'EVENTS');
 else
     targetdir = uigetdir(); % 같은 위치에 EVENT 폴더가 없으면 사용자에게 물어봄.
+    if isequal(targetdir,0)
+        return;
+    end
 end
 
 for f = 1 : numel(Paths)

@@ -3,7 +3,10 @@
 % 참고 : E : Escape | A : Avoid | M : 1M time out | G : Give up
 
 %% 분석할 recording 데이터를 끌어다옴.
-[filename, pathname] = uigetfile('.mat', 'MultiSelect', 'on');
+[filename, pathname] = uigetfile('C:\VCF\Lobster\data\rawdata\*.mat', 'MultiSelect', 'on');
+if isequal(filename,0)
+    return;
+end
 Paths = strcat(pathname,filename);
 if (ischar(Paths))
     Paths = {Paths};
@@ -15,6 +18,9 @@ if exist(strcat(pathname,'EVENTS'),'dir') == 7 % 같은 위치에 EVENTS 폴더가 있음
     targetdir = strcat(pathname,'EVENTS');
 else
     targetdir = uigetdir(); % 같은 위치에 EVENT 폴더가 없으면 사용자에게 물어봄.
+    if isequal(targetdir,0)
+        return;
+    end
 end
 [ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser(targetdir);
 AnalyticValueExtractor;
