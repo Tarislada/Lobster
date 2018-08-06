@@ -10,7 +10,11 @@ if (ischar(Paths))
     filename = {filename};
 end
 
-targetdir = uigetdir();
+if exist(strcat(pathname,'EVENTS'),'dir') == 7 % 같은 위치에 EVENTS 폴더가 있음
+    targetdir = strcat(pathname,'EVENTS');
+else
+    targetdir = uigetdir(); % 같은 위치에 EVENT 폴더가 없으면 사용자에게 물어봄.
+end
 
 for f = 1 : numel(Paths)
     load(Paths{f});
