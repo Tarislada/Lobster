@@ -90,9 +90,11 @@ for events = 1 : numel(varnames)
     set(gui2, 'Position', [1,1,Screensize(3)/2,Screensize(4)]);
     movegui(gui2,'east');
     for comp = 1 : N
-        subplot(4,1,comp);
+        subplot(N,1,comp);
         plot(U(:,comp));
     end
+    subplot(N,1,1);
+    title([varnames{events}, ' : Components']);
     
     % loading 값에 따라서 정렬한 Neuron 데이터 그리기.
     gui1 = figure('name',varnames{events});
@@ -100,14 +102,17 @@ for events = 1 : numel(varnames)
     movegui(gui1,'west');
     % 총 N개의 component를 사용. 각 component의 loading 값을 기준으로 정렬함.
     % 데이터에는 따로 손을 안대고 정렬하는 방식만 바꾼 것.
+    title(varnames{events});
     for comp = 1 : N
-        subplot(4,1,comp);
+        subplot(N,1,comp);
         [~,sortindex] = sort(Z(:,comp));
         imagesc(X(sortindex,:));
         colormap jet;
         hold on;
         line([zeroline, zeroline],[0, numNeuron],'Color','r');
     end
+    subplot(N,1,1);
+    title(varnames{events});
 end
         
 
