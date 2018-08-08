@@ -1,16 +1,13 @@
 %% Unit basic analysis
 
 
-clc
-clear
+if ~exist('f','var')
+    [FileName,PathName] = uigetfile;
 
+    filepath = strcat(PathName,FileName);
 
-[FileName,PathName] = uigetfile;
-
-filepath = strcat(PathName,FileName);
-
-load(filepath);
-
+    load(filepath);
+end
 
 %% waveform
 
@@ -42,28 +39,30 @@ pwave2 = wave2';
 pwave3 = wave3';
 pwave4 = wave4';
 
-figure
-subplot(2,1,1)
-x = 1:1:p;
-plot(x,pwave1,'b')
-hold on
-plot(x+p,pwave2,'b')
-plot(x+2*p,pwave3,'b')
-plot(x+3*p,pwave4,'b')
+if ~exist('donotdrawA2','var')
+    figure(8);
+    clf;
+    subplot(2,1,1)
+    x = 1:1:p;
+    plot(x,pwave1,'b')
+    hold on
+    plot(x+p,pwave2,'b')
+    plot(x+2*p,pwave3,'b')
+    plot(x+3*p,pwave4,'b')
 
-ylabel('MicroV')
+    ylabel('MicroV')
 
-subplot(2,1,2)
+    subplot(2,1,2)
 
-plot(x,mwave1,'b','LineWidth',2)
-hold on
-plot(x+p,mwave2,'b','LineWidth',2)
-plot(x+2*p,mwave3,'b','LineWidth',2)
-plot(x+3*p,mwave4,'b','LineWidth',2)
+    plot(x,mwave1,'b','LineWidth',2)
+    hold on
+    plot(x+p,mwave2,'b','LineWidth',2)
+    plot(x+2*p,mwave3,'b','LineWidth',2)
+    plot(x+3*p,mwave4,'b','LineWidth',2)
 
 
-ylabel('MicroV')
-
+    ylabel('MicroV')
+end
 
 %% Timesptamps
 
