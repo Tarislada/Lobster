@@ -1,6 +1,15 @@
-%% Imlazy_trial_by_trial
-% Imlazy 처럼 여러 유닛들을 한번에 불러들여서 각 trial 행동 타입별로 데이터를 묶어줌.
+%% A2, A3 를 돌린 후 특정 행동 타입의 trial 만 뽑아낸뒤 align된 firing 데이터를 저장하는 스크립트.
+% uigetfile 함수를 통해서 여러개의 뉴런 데이터(.mat)형식을 선택.
+% 행동 데이터가 들어있는 EVENT 폴더를 선택.
+% (뉴런 데이터와 같은 위치에 EVENT 폴더가 있으면 묻지 않고 해당 폴더를 사용)
+% 각 trial 행동 타입별로 데이터를 묶음.
+% align된 firing data를 선택한 뉴런 파일 끝에 ___aligned 를 붙여서 저장.
+% 향후 PCA 분석을 위함.
+
 % 참고 : E : Escape | A : Avoid | M : 1M time out | G : Give up
+
+%% PARAMETERS
+BEHAV_TYPE = 'E'; %나온 데이터에서 어떤 behaviorResult 만 선택할지 결정. A, E, G, M 입력 가능.
 
 %% 분석할 recording 데이터를 끌어다옴.
 [filename, pathname] = uigetfile('C:\VCF\Lobster\data\rawdata\*.mat', 'MultiSelect', 'on');
@@ -27,9 +36,6 @@ AnalyticValueExtractor;
 
 %% Behavior type chart 그려주기.
 tabulate(behaviorResult);
-
-%% 나온 데이터에서 어떤 behaviorResult 만 선택할지 결정
-BEHAV_TYPE = 'E';
 
 %% 기존 선휘선배가 짜두신 양식에 맞추기 위해서 새로운 변수를 생성.
 % BehavDataParser의 경우 ParsedData 안에 모든 데이터를 담는데,
@@ -60,7 +66,7 @@ end
 % 이렇게 만들어진 TRON, TROF, ... 은 설정한 BEHAV_TYPE에 해당되는 trial들로만 구성되며,
 % 이 변수들은 이후 A3에 넣은 후 분석에 사용됨.
 
-%% Imlazy를 돌림.
+%% A2와 A3를 돌림.
 for f = 1 : numel(Paths)
     load(Paths{f});
     neuronname = filename{f};

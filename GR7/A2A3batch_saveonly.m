@@ -1,7 +1,8 @@
-%% A2 스크립트와 A3 스크립트를 돌린 후 뉴런 firing 데이터만 저장하는 script
-% 먼저 uigetfile 함수를 통해서 여러개의 뉴런 데이터(.mat)형식을 선택.
-% 다음으로 GambleRatsBehavParser를 돌리기 위해서 EVENT 폴더를 선택해 주는 uiget dir을 실행.
-% 처음에 선택한 뉴런 데이터의 파일명을 기준으로 A3를 돌린뒤 해당 결과물을 .png 형식으로 저장.
+%% A2, A3 를 돌린 후 align된 firing 데이터를 저장하는 스크립트.
+% uigetfile 함수를 통해서 여러개의 뉴런 데이터(.mat)형식을 선택.
+% 행동 데이터가 들어있는 EVENT 폴더를 선택.
+% (뉴런 데이터와 같은 위치에 EVENT 폴더가 있으면 묻지 않고 해당 폴더를 사용)
+% align된 firing data를 선택한 뉴런 파일 끝에 ___aligned 를 붙여서 저장.
 % 향후 PCA 분석을 위함.
 
 [filename, pathname] = uigetfile('.mat', 'MultiSelect', 'on');
