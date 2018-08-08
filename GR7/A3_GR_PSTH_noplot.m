@@ -1,5 +1,4 @@
-%% Gamble Rats LOB sessions event reader
-
+%% A3_GR_PSTH_noplot
 % 모든 trial을 TRON, First IR 등으로 align.
 % align된 데이터를 모든 trial에 대해서 합친 변수 => Nt
 % Nt 를 정규화 시킨 데이터를 각 정렬한 event의 이름을 따서 Z struct 내에 저장.
