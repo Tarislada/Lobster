@@ -9,7 +9,7 @@ TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
 
 
 %% Unit data 경로 선택
-[filename, pathname] = uigetfile('.mat', 'MultiSelect', 'on');
+[filename, pathname] = uigetfile('C:\VCF\Lobster\data\rawdata\*.mat', 'MultiSelect', 'on');
 if isequal(filename,0) % 선택하지 않은 경우 취소
     return;
 end
@@ -67,6 +67,7 @@ for t = 1 : numTrial
     end
     
 end
+clearvars t numTrial
 timepoint_LOFF(timepoint_LOFF == 0) = []; % Lick 데이터가 없는(LICK이 없는) trial은 날림.
 timepoint_IROF(timepoint_IROF == 0) = []; % IR 데이터가 없는(IRON이 없는) trial은 날림.
 timepoint_ATTK(timepoint_ATTK == 0) = []; % Attack 데이터가 없는(ATTK가 없는) trial은 날림.
@@ -111,6 +112,8 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
         end
     end
     
+    clearvars tw twb tempbin spikes
+    
     %% calculate Zscore
     Z.LOFF = zscore(timebin_LOFF ./ numel(timepoint_LOFF)); 
     Z.IROF = zscore(timebin_IROF ./ numel(timepoint_IROF));
@@ -125,8 +128,12 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     temp2 = strfind(filename{f},'.mat');
     filename_cellnum = filename{f}(temp1(end)+1:temp2-1);
     save([pathname,'\aligned_new\',filename_date,'_',filename_cellnum,'_aligned.mat'],'Z');
-    clearvars filename_date temp1 temp2 filename_cellnum Z
+    clearvars filename_date temp1 temp2 filename_cellnum Z 
 end
 
 fprintf('====================================================\n');
 fprintf('%d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned_new'));
+
+%AlignEvent_separateAE;
+
+clearvars f time* TIME* filename pathname Paths ParsedData
