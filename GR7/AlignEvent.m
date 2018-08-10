@@ -1,11 +1,6 @@
-%% A2-3 JiHoon Version
-% 특정 이벤트 시점 전후로 시간을 설정.
-
-% EVENT 파일을 로드
-% 여러 뉴런들을 로드
-% BehavDataParser를 돌리고
-% 매 trial 별로 맨 마지막 IROF 전후 4초동안 timebin을 생성
-% spike 가 해당 bin에 
+%% AlignEvent
+% A2-3 JiHoon Version
+% 특정 이벤트 시점 전후로 spike 데이터를 정렬한 후 zscore를 계산, aligned_new 폴더에 저장.
 
 %% PARAMETERS
 TIMEWINDOW_LEFT = -4; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
@@ -65,7 +60,7 @@ for t = 1 : numTrial
     %% ATTK
     if ~isempty(ParsedData{t,4}) %LICK 정보가 비어있지 않으면,
         temp = ParsedData{t,4};
-        timepoint_ATTK(t) = temp(1) + ParsedData{t,1}(1); % 가장 마지막 LICK 데이터 = last LOFF 를 대입.
+        timepoint_ATTK(t) = temp(1) + ParsedData{t,1}(1); % ATTK 데이터 = first ATTK 를 대입.
         clearvars temp;
     else %ATTK 정보가 비어있으면
         timepoint_ATTK(t) = 0;
