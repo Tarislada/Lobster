@@ -119,8 +119,13 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     if exist(strcat(pathname,'aligned_new'),'dir') == 0 % aligned 폴더가 존재하지 않으면
         mkdir(strcat(pathname,'aligned_new')); % 만들어줌
     end
-    save([pathname,'\aligned_new\',filename{f}(1:end-4),'___aligned_new.mat'],'Z');
-    clearvars Z
+    % parse filename
+    filename_date = filename{f}(strfind(filename{1},'GR7-')+6:strfind(filename{1},'GR7-')+9);
+    temp1 = strfind(filename{f},'_');
+    temp2 = strfind(filename{f},'.mat');
+    filename_cellnum = filename{f}(temp1(end)+1:temp2-1);
+    save([pathname,'\aligned_new\',filename_date,'_',filename_cellnum,'_aligned.mat'],'Z');
+    clearvars filename_date temp1 temp2 filename_cellnum Z
 end
 
 fprintf('====================================================\n');
