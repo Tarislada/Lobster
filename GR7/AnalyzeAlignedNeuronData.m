@@ -29,22 +29,22 @@ end
 clearvars f;
 
 %% 각 이벤트에 align된 데이터를 가지고 matrix 만들기
-TRON_mat = zeros(numNeuron,numel(Neurons{1}.TRON));
-IRON_mat = zeros(numNeuron,numel(Neurons{1}.IRON));
-LICK_mat = zeros(numNeuron,numel(Neurons{1}.LICK));
+%TRON_mat = zeros(numNeuron,numel(Neurons{1}.TRON));
+%IRON_mat = zeros(numNeuron,numel(Neurons{1}.IRON));
+%LICK_mat = zeros(numNeuron,numel(Neurons{1}.LICK));
 LOFF_mat = zeros(numNeuron,numel(Neurons{1}.LOFF));
 IROF_mat = zeros(numNeuron,numel(Neurons{1}.IROF));
 ATTK_mat = zeros(numNeuron,numel(Neurons{1}.ATTK));
-TROF_mat = zeros(numNeuron,numel(Neurons{1}.TROF));
+%TROF_mat = zeros(numNeuron,numel(Neurons{1}.TROF));
 
 for n = 1 : numNeuron
-    TRON_mat(n,:) = Neurons{n}.TRON;
-    IRON_mat(n,:) = Neurons{n}.IRON;
-    LICK_mat(n,:) = Neurons{n}.LICK;
+    %TRON_mat(n,:) = Neurons{n}.TRON;
+    %IRON_mat(n,:) = Neurons{n}.IRON;
+    %LICK_mat(n,:) = Neurons{n}.LICK;
     LOFF_mat(n,:) = Neurons{n}.LOFF;
     IROF_mat(n,:) = Neurons{n}.IROF;
     ATTK_mat(n,:) = Neurons{n}.ATTK;
-    TROF_mat(n,:) = Neurons{n}.TROF;
+    %TROF_mat(n,:) = Neurons{n}.TROF;
 end
 
 clearvars Neurons n
@@ -106,14 +106,14 @@ for events = 1 : numel(varnames)
     % 데이터에는 따로 손을 안대고 정렬하는 방식만 바꾼 것.
     title(varnames{events});
     for comp = 1 : N
-        subplot(N,1,comp);
+        subplot(1,N,comp);
         [~,sortindex] = sort(Z(:,comp));
         imagesc(X(sortindex,:));
         colormap jet;
         hold on;
         line([zeroline, zeroline],[0, numNeuron],'Color','r');
     end
-    subplot(N,1,1);
+    subplot(1,N,1);
     title(varnames{events});
 end
         
