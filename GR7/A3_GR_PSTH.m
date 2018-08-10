@@ -12,9 +12,9 @@
 % 첫 trial에서 IRON, IROF, Attack 데이터가 없는 경우 해당 분석은 하지 않음.
 if ~exist('noBehavParser','var')
     if exist('targetdir','var')
-        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser(targetdir);
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF]=GambleRatsBehavParser(targetdir);
     else
-        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRatsBehavParser();
+        [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF]=GambleRatsBehavParser();
         neuronname = 'Neuron.mat';
     end
 end

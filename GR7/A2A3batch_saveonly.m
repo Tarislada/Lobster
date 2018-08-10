@@ -28,8 +28,8 @@ for f = 1 : numel(Paths)
     load(Paths{f});
     neuronname = filename{f};
     donotdrawA2 = true; % A2에서 이 파트가 있으면 뒤에서 그래프를 그리지 않음.
-    A2_GR_singleUnit_anlyzer_JH;
-    A3_GR_PSTH_v3_JH;
+    A2_GR_singleUnit_anlyzer;
+    A3_GR_PSTH_noplot;
     clearvars -except filename pathname Paths targetdir f Z
     if exist(strcat(pathname,'aligned'),'dir') == 0 % aligned 폴더가 존재하지 않으면
         mkdir(strcat(pathname,'aligned')); % 만들어줌
