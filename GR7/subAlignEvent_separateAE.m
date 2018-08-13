@@ -3,8 +3,8 @@
 % trial을 Avoid Escape으로 나누고 특정 이벤트 시점 전후로 spike 데이터를 정렬한 후 zscore를 계산, aligned_new_Avoid, aligned_new_Escape 폴더에 저장.
 
 AnalyticValueExtractor;
-
-for trialtype = ['A','E']
+TYPE = ['A','C','D'];
+for trialtype = TYPE
     %% Separate ParsedData into trialtype
     ParsedData_separated = cell(sum(behaviorResult == trialtype),size(ParsedData,2));
     cellentered = 1;
@@ -155,7 +155,9 @@ for trialtype = ['A','E']
     fprintf('2. %d 개의 파일이 %s에 생성되었습니다.\n',f,p);
     fprintf('-----------------------------------------------------------------------------\n');
 end
-
-fprintf('Avoid : %d | Escape : %d | Total : %d\n',sum(behaviorResult == 'A'), sum(behaviorResult == 'E'), numel(behaviorResult));   
+for ev = TYPE
+    fprintf('%c : %d | ', ev, sum(behaviorResult == ev));
+end
+fprintf('Total : %d\n',numel(behaviorResult));   
 fprintf('-----------------------------------------------------------------------------\n');
 clearvars numIRClusters numLickClusters behaviorResult
