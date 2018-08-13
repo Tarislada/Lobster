@@ -19,10 +19,19 @@ for trialtype = ['A','E']
     clearvars cellentered i j cellentered
     %% Find Time window in each trial
     numTrial = size(ParsedData_separated,1); % 총 trial 수
+    timepoint_LICK = zeros(numTrial,1); % LICK 시점의 정보를 담는 변수
     timepoint_LOFF = zeros(numTrial,1); % LOFF 시점의 정보를 담는 변수
     timepoint_IROF = zeros(numTrial,1); % IROF 시점의 정보를 담는 변수
     timepoint_ATTK = zeros(numTrial,1); % ATTK 시점의 정보를 담는 변수
     for t = 1 : numTrial
+       %% LICK
+        if ~isempty(ParsedData{t,3}) %LICK 정보가 비어있지 않으면,
+            temp = ParsedData{t,3};
+            timepoint_LICK(t) = temp(1) + ParsedData{t,1}(1); % 가장 처음의 LICK 데이터 = first LICK을 대입.
+            clearvars temp;
+        else %LICK 정보가 비어있으면
+            timepoint_LICK(t) = 0;
+        end
         %% LOFF
         if ~isempty(ParsedData_separated{t,3}) %LICK 정보가 비어있지 않으면,
             temp = ParsedData_separated{t,3};
@@ -52,10 +61,12 @@ for trialtype = ['A','E']
 
     end
     clearvars t ParsedData_separated numTrial
+    timepoint_LICK(timepoint_LICK == 0) = []; % Lick 데이터가 없는(LICK이 없는) trial은 날림.
     timepoint_LOFF(timepoint_LOFF == 0) = []; % Lick 데이터가 없는(LICK이 없는) trial은 날림.
     timepoint_IROF(timepoint_IROF == 0) = []; % IR 데이터가 없는(IRON이 없는) trial은 날림.
     timepoint_ATTK(timepoint_ATTK == 0) = []; % Attack 데이터가 없는(ATTK가 없는) trial은 날림.
     %---- 주의 ----% 이 때문에 trial 갯수와 안맞거나 서로 다른 Event 끼리는 데이터가 밀릴 수 있음.
+    timewindow_LICK = [timepoint_LICK+TIMEWINDOW_LEFT,timepoint_LICK+TIMEWINDOW_RIGHT];
     timewindow_LOFF = [timepoint_LOFF+TIMEWINDOW_LEFT,timepoint_LOFF+TIMEWINDOW_RIGHT];
     timewindow_IROF = [timepoint_IROF+TIMEWINDOW_LEFT,timepoint_IROF+TIMEWINDOW_RIGHT];
     timewindow_ATTK = [timepoint_ATTK+TIMEWINDOW_LEFT,timepoint_ATTK+TIMEWINDOW_RIGHT];
@@ -68,9 +79,18 @@ for trialtype = ['A','E']
         clearvars SU;
 
         %% 각 timewindow 마다 해당 구간에 속하는 spike들을 모조리 확인.
+        timebin_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
         timebin_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
         timebin_IROF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
         timebin_ATTK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
+        % LICK
+        for tw = 1 : numel(timepoint_LICK) % 매 window마다 
+            % window를 bin으로 나눈 tempbin을 만들고
+            tempbin = linspace(timewindow_LICK(tw,1),timewindow_LICK(tw,2),numel(timebin_LICK)+1);
+            for twb = 1 : numel(tempbin)-1 % 각 bin에 들어가는 spike의 수를 센다
+                timebin_LICK(twb) = timebin_LICK(twb) + sum(and(spikes >= tempbin(twb), spikes < tempbin(twb+1)));
+            end
+        end
         % LOFF
         for tw = 1 : numel(timepoint_LOFF) % 매 window마다 
             % window를 bin으로 나눈 tempbin을 만들고
@@ -99,6 +119,7 @@ for trialtype = ['A','E']
         clearvars tw twb tempbin spikes
 
         %% calculate Zscore
+        Z.LICK = zscore(timebin_LICK ./ numel(timepoint_LICK));
         Z.LOFF = zscore(timebin_LOFF ./ numel(timepoint_LOFF)); 
         Z.IROF = zscore(timebin_IROF ./ numel(timepoint_IROF));
         Z.ATTK = zscore(timebin_ATTK ./ numel(timepoint_ATTK)); 

@@ -9,7 +9,7 @@ TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
 
 %% Unit data 경로 선택
 if exist('targetfiles','var') == 0 % 미리 targetfiles를 정하지 않은 경우
-    [filename, pathname] = uigetfile('C:\VCF\Lobster\data\rawdata\*.mat', 'MultiSelect', 'on');
+    [filename, pathname] = uigetfile('*.mat', 'MultiSelect', 'on');
     if isequal(filename,0) % 선택하지 않은 경우 취소
         return;
     end
