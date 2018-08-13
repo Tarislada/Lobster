@@ -7,16 +7,19 @@ TIMEWINDOW_LEFT = -4; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
 TIMEWINDOW_RIGHT = +4; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
 TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
 
-
 %% Unit data 경로 선택
-[filename, pathname] = uigetfile('C:\VCF\Lobster\data\rawdata\*.mat', 'MultiSelect', 'on');
-if isequal(filename,0) % 선택하지 않은 경우 취소
-    return;
-end
-Paths = strcat(pathname,filename);
-if (ischar(Paths))
-    Paths = {Paths};
-    filename = {filename};
+if exist(targetfiles,'var') == 1 % 미리 targetfiles를 정해둔 경우
+    dddddd
+else
+    [filename, pathname] = uigetfile('C:\VCF\Lobster\data\rawdata\*.mat', 'MultiSelect', 'on');
+    if isequal(filename,0) % 선택하지 않은 경우 취소
+        return;
+    end
+    Paths = strcat(pathname,filename);
+    if (ischar(Paths))
+        Paths = {Paths};
+        filename = {filename};
+    end
 end
 
 %% EVENT data 경로 선택 및 불러오기
