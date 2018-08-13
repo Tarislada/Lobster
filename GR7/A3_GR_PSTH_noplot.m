@@ -226,7 +226,7 @@ Z.LOFF = zscore(Nt);
 %% Only Lick trials PRTH (peri response t histogram)
 %align by last IR
 ltr = 0;
-
+s_tmp_stack = [];
 for j = 1:length(TRON)
     
     if (~isempty(Lon{j}))

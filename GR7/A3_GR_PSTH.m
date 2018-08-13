@@ -514,7 +514,15 @@ nodataflag = false; % 데이터에 문제가 있는 경우 true
 figure(5);
 clf;
     
+subplot(4,1,1);
+hold on;
+subplot(4,1,3);
+hold on;
+subplot(4,1,4);
+hold on;
+    
 ltr = 0;
+s_tmp_stack = [];
 
 for j = 1:length(TRON)
     
