@@ -111,14 +111,30 @@ for trialtype = ['A','E']
         temp1 = strfind(filename{f},'_');
         temp2 = strfind(filename{f},'.mat');
         filename_cellnum = filename{f}(temp1(end)+1:temp2-1);
+        
+       %% Save Data
+        % save data : original data location
         save([pathname,'\aligned_new_',trialtype,'\',filename_date,'_',filename_cellnum,'_',trialtype,'_aligned.mat'],'Z');
-        clearvars filename_date temp1 temp2 filename_cellnum Z 
+        % save data : outer 'processed data' location
+        p1 = find(pathname=='\');
+        p2 = p1(end-2);
+        p3 = pathname(1:p2);
+
+        p = strcat(p3,'processedData','\',trialtype);
+        clearvars p1 p2 p3
+        if exist(p,'dir') == 0 % 폴더가 존재하지 않으면
+            mkdir(p); % 만들어줌
+        end
+        save(strcat(p,'\',filename_date,'_',filename_cellnum,'_',trialtype,'_aligned.mat'),'Z');
+
+        clearvars filename_date temp1 temp2 filename_cellnum Z
     end
     
-    fprintf('====================================================\n');
-    fprintf('%d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned_new_',trialtype));   
+    fprintf('1. %d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned_new'));
+    fprintf('2. %d 개의 파일이 %s에 생성되었습니다.\n',f,p);
+    fprintf('-----------------------------------------------------------------------------\n');
 end
-fprintf('====================================================\n');
-fprintf('Avoid : %d | Escape : %d | Total : %d\n',sum(behaviorResult == 'A'), sum(behaviorResult == 'E'), numel(behaviorResult));   
 
+fprintf('Avoid : %d | Escape : %d | Total : %d\n',sum(behaviorResult == 'A'), sum(behaviorResult == 'E'), numel(behaviorResult));   
+fprintf('-----------------------------------------------------------------------------\n');
 clearvars numIRClusters numLickClusters behaviorResult

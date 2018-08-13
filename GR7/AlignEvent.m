@@ -155,11 +155,35 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     temp1 = strfind(filename{f},'_');
     temp2 = strfind(filename{f},'.mat');
     filename_cellnum = filename{f}(temp1(end)+1:temp2-1);
+    
+    %% Save Data
+    % save data : original data location
     save([pathname,'\aligned_new\',filename_date,'_',filename_cellnum,'_aligned.mat'],'Z');
+    % save data : outer 'processed data' location
+    p1 = find(pathname=='\');
+    p2 = p1(end-2);
+    p3 = pathname(1:p2);
+    
+    if isSuc 
+        p = strcat(p3,'processedData','\Suc');
+        clearvars p1 p2 p3
+        if exist(p,'dir') == 0 % 폴더가 존재하지 않으면
+            mkdir(p); % 만들어줌
+        end
+        save(strcat(p,'\',filename_date,'_',filename_cellnum,'_aligned.mat'),'Z');
+    else
+        p = strcat(p3,'processedData','\All');
+        clearvars p1 p2 p3
+        if exist(p,'dir') == 0 % 폴더가 존재하지 않으면
+            mkdir(p); % 만들어줌
+        end
+        save(strcat(p,'\',filename_date,'_',filename_cellnum,'_aligned.mat'),'Z');
+    end
     clearvars filename_date temp1 temp2 filename_cellnum Z 
 end
 
-fprintf('%d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned_new'));
+fprintf('1. %d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned_new'));
+fprintf('2. %d 개의 파일이 %s에 생성되었습니다.\n',f,p);
 fprintf('-----------------------------------------------------------------------------\n');
 
 if ~isSuc
