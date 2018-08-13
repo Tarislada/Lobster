@@ -8,9 +8,7 @@ TIMEWINDOW_RIGHT = +4; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
 TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
 
 %% Unit data 경로 선택
-if exist(targetfiles,'var') == 1 % 미리 targetfiles를 정해둔 경우
-    dddddd
-else
+if exist('targetfiles','var') == 0 % 미리 targetfiles를 정하지 않은 경우
     [filename, pathname] = uigetfile('C:\VCF\Lobster\data\rawdata\*.mat', 'MultiSelect', 'on');
     if isequal(filename,0) % 선택하지 않은 경우 취소
         return;
@@ -19,6 +17,11 @@ else
     if (ischar(Paths))
         Paths = {Paths};
         filename = {filename};
+    end
+    if contains(pathname,'suc') % 'suc'을 폴더경로가 가지고 있으면 sucrose training 데이터로 간주
+        isSuc = true;
+    else
+        isSuc = false;
     end
 end
 
@@ -156,9 +159,11 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     clearvars filename_date temp1 temp2 filename_cellnum Z 
 end
 
-fprintf('====================================================\n');
 fprintf('%d 개의 파일이 %s에 생성되었습니다.\n',f,strcat(pathname,'aligned_new'));
+fprintf('-----------------------------------------------------------------------------\n');
 
-%subAlignEvent_separateAE;
-
+if ~isSuc
+    subAlignEvent_separateAE
+end
+fprintf('==============================================================================\n');
 clearvars f time* TIME* filename pathname Paths ParsedData
