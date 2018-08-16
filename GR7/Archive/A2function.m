@@ -1,4 +1,4 @@
-function ts = A2function(filepath)
+function ts = A2function(filepath,neuronname)
 %% Unit basic analysis
 
 load(filepath);
@@ -20,7 +20,7 @@ ts = su(:,1); %Timestamps : 언제 firing 했는지를 알려줌.
 
 %% Draw Graph
 
-figure;
+fig = figure(1);
 clf;
 
 subplot(2,1,1);
@@ -61,4 +61,5 @@ plot(x+3*p,mwave4,'b','LineWidth',2);
 
 ylabel('MicroV');
 
+saveas(fig,strcat(neuronname,'_1.png'));
 end

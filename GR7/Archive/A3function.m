@@ -1,4 +1,4 @@
-function A3function(ts, TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF)
+function A3function(ts, TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF,neuronname)
 
 %% exp conditions
 
@@ -71,7 +71,7 @@ end
 %% Only Lick trials PRTH (peri response t histogram)
 %align by last IR
 nodataflag = false; % 데이터에 문제가 있는 경우 true
-figure;
+fig = figure(2);
 clf;
     
 subplot(4,1,1);
@@ -168,4 +168,5 @@ if ltr ~=0
     ylabel('Firing Rate')
 
 end
+saveas(fig,neuronname);
 end

@@ -8,7 +8,7 @@ end
 MIN_LICK_CLUSTER_INTERVAL = 0.3; % 히스토그램 분석후 97.6035% 가 속하는 0.3초로 정함.
 MIN_IR_CLUSTER_INTERVAL = 1.3; % 히스토그램 분석후 67.8255% 가 속하는 1.3초로 정함.
 MIN_1MIN_TIMEOUT_DURATION = 55; % 1min timeout으로 인정하기 위한 최소의 시간.
-SEPARATE_3SEC_6SEC_ESCAPE = true; % 3초 escape과 6초 escape을 구별할지.
+SEPARATE_3SEC_6SEC_ESCAPE = false; % 3초 escape과 6초 escape을 구별할지.
 
 %% AnalyticValues
 numTrial = size(ParsedData,1);

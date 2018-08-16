@@ -9,6 +9,13 @@ if (ischar(Paths))
     filename = {filename};
 end
 
+
+
+
+
+
+
+
 %% A2
 ts = A2function(Paths{1});
 fprintf('A2 Complete\n');
