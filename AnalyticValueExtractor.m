@@ -1,13 +1,14 @@
 %% AnalyticValueExtractor
 % Parsed 데이터 존재 확인
 if ~exist('ParsedData')
-    error('Error.\nBehavDataParser를 먼저 돌려주세요.');
+    error('Error.BehavDataParser를 먼저 돌려주세요.');
 end
 
 %% Constants
 MIN_LICK_CLUSTER_INTERVAL = 0.3; % 히스토그램 분석후 97.6035% 가 속하는 0.3초로 정함.
 MIN_IR_CLUSTER_INTERVAL = 1.3; % 히스토그램 분석후 67.8255% 가 속하는 1.3초로 정함.
 MIN_1MIN_TIMEOUT_DURATION = 55; % 1min timeout으로 인정하기 위한 최소의 시간.
+SEPARATE_3SEC_6SEC_ESCAPE = false; % 3초 escape과 6초 escape을 구별할지.
 
 %% AnalyticValues
 numTrial = size(ParsedData,1);
@@ -54,21 +55,35 @@ for trial = 1 : size(ParsedData,1)
     else % Attack 이 있었음 : Avoid / Escape 둘 중 하나
         % parameter selection에서 보았듯이 0.5초 이후로 있는 반응은 Attack후 문을 바로 닫지 않아서
         % 생기는 것
-        IAttackIROFI = IRs(end,2) - Attack; % Attack과 마지막 IR OFF 사이의 시간. +인경우 Escape, -인경우 Avoid
+        IAttackIROFI = IRs(end,2) - Attack(1); % Attack과 마지막 IR OFF 사이의 시간. +인경우 Escape, -인경우 Avoid
         k = 1;
         while IAttackIROFI > 0.5 % IAttackIROFI가 0.5초 이상이라는 것은 마지막 IR이 Attack 후에 생긴 IR 이라는 의미.
-            IAttackIROFI = IRs(end-k,2) - Attack;
+            IAttackIROFI = IRs(end-k,2) - Attack(1);
             k = k + 1;
         end
         clearvars i
         
         if IAttackIROFI >= 0 % Escape
-            behaviorResult(trial) = 'E';
+            if SEPARATE_3SEC_6SEC_ESCAPE 
+                % true 인 경우 First Lick과 Attack 사이 시간을 사용해서
+                % Escape을 C와 D로 구분. 
+                % C : Escape on 3sec trial
+                % D : Escape on 6sec trial
+                if Attack(1) - Licks(1) >= 4.5 % 첫 Lick과 Attack의 사이가 4.5초 이하인경우
+                    behaviorResult(trial) = 'C';
+                else
+                    behaviorResult(trial) = 'D';
+                end
+            else
+                behaviorResult(trial) = 'E';
+            end
         else % Avoid
             behaviorResult(trial) = 'A';
         end
     end
 end
+
+clearvars Attack Attacks IAttackIROFI IIRI ILicksI IRs k Licks MIN_1MIN_TIMEOUT_DURATION MIN_IR_CLUSTER_INTERVAL MIN_LICK_CLUSTER_INTERVAL numTrial trial Trials Trial
         
 
 

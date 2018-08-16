@@ -1,7 +1,4 @@
 *.asv
+/sampledata/*
 /data/*
-PythonCode/.idea/workspace.xml
-
 PythonCode/\.idea/
-
-PPT/

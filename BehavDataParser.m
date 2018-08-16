@@ -10,7 +10,7 @@ DATAPAIR = [1,      1,      2,      2,      3,      3,      4,      4      ]; % 
 if ~exist('targetdir','var')
     currfolder = uigetdir();
     if currfolder == 0
-        error('Error.\n데이터 파일 폴더를 선택하지 않으셨습니다.','');
+        error('Error.데이터 파일 폴더를 선택하지 않으셨습니다.','');
     end
     targetdir = currfolder;
 else
@@ -69,13 +69,13 @@ clearvars startRow formatSpec fileID dataArray filelist filename currfolder ans
 % 서로 짝이 되는 데이터, 예를 들어 TRON와 TROF가 서로 갯수가 다른 이상한 데이터를 찾아내기 위함.
 % 둘둘 짝이 되는 것을 기준으로 작성. 세 가지 파일의 크기가 같은 경우 코드 변경 필요.
 PAIR = unique(DATAPAIR);
-for i = numel(PAIR)
+for i = 1:numel(PAIR)
     if PAIR(i) == 0
         continue;
     end
     j = find(DATAPAIR == PAIR(i));
-    if size(RAWDATA{j(1)}) ~= size(RAWDATA{j(2)})
-        error('Error.\n %s와 %s의 크기가 다릅니다.\n데이터 누락의 가능성이 있습니다.',DATALIST{j(1)}, DATALIST{j(2)});
+    if size(RAWDATA{j(1)},1) ~= size(RAWDATA{j(2)},1)
+        error('Error.\n%s와 연관된 다른 변수의 크기가 다릅니다.\n데이터 누락의 가능성이 있습니다.\n',DATALIST{DATAPAIR==j(1)});
     end
 end
         
@@ -103,6 +103,7 @@ clearvars RAWDATA
 % 쪼개기
 numTrial = size(Trials,1);
 ParsedData = cell(numTrial,4);
+
 % +------------------------+----------------+---------------+----------------+
 % | [TRON Time, TROF Time] | [[IRON, IROF]] | [[LICK,LOFF]] | [[ATTK, ATOF]] |
 % +------------------------+----------------+---------------+----------------+

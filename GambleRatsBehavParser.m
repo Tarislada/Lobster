@@ -3,8 +3,8 @@ function [TRON, TROF, IRON, IROF, LICK, LOFF, ATTK, ATOF, BLON, BLOF]=GambleRats
 % TDT OpenBridge 에서 추출한 파일을 이용해 행동 데이터를 분석한다.
 % 2018 Knowblesse
 %% Constants
-DATALIST = {'ATTK', 'ATOF', 'BLON', 'BLOF', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing에 필요한 데이터의 목록
-DATAPAIR = [0,         0,      1,      1,      2,      2,      3,      3,      4,      4      ]; % 에러 확인용 값들. 같은 pair 번호를 가지는 데이터 끼리는 크기가 같아야 함.단, 0인경우 신경 안씀.
+DATALIST = {'ATTK', 'ATOF', 'IROF', 'IRON', 'LICK', 'LOFF', 'TROF', 'TRON' }; % parsing에 필요한 데이터의 목록
+DATAPAIR = [0,       0,      2,      2,      3,      3,      4,      4      ]; % 에러 확인용 값들. 같은 pair 번호를 가지는 데이터 끼리는 크기가 같아야 함.단, 0인경우 신경 안씀.
 
 %% 폴더 선택
 if ~exist('targetdir','var')
@@ -69,13 +69,13 @@ clearvars startRow formatSpec fileID dataArray filelist filename currfolder ans
 % 서로 짝이 되는 데이터, 예를 들어 TRON와 TROF가 서로 갯수가 다른 이상한 데이터를 찾아내기 위함.
 % 둘둘 짝이 되는 것을 기준으로 작성. 세 가지 파일의 크기가 같은 경우 코드 변경 필요.
 PAIR = unique(DATAPAIR);
-for i = numel(PAIR)
+for i = 1:numel(PAIR)
     if PAIR(i) == 0
         continue;
     end
     j = find(DATAPAIR == PAIR(i));
-    if size(RAWDATA{j(1)}) ~= size(RAWDATA{j(2)})
-        error('Error.\n %s와 %s의 크기가 다릅니다.\n데이터 누락의 가능성이 있습니다.',DATALIST{j(1)}, DATALIST{j(2)});
+    if size(RAWDATA{j(1)},1) ~= size(RAWDATA{j(2)},1)
+        error('Error.\n%s와 연관된 다른 변수의 크기가 다릅니다.\n데이터 누락의 가능성이 있습니다.\n',DATALIST{DATAPAIR==j(1)});
     end
 end
         
@@ -93,10 +93,8 @@ LICK_index = find(strcmp(DATALIST,'LICK'));
 LOFF_index = find(strcmp(DATALIST,'LOFF'));
 ATTK_index = find(strcmp(DATALIST,'ATTK'));
 ATOF_index = find(strcmp(DATALIST,'ATOF'));
-BLON_index = find(strcmp(DATALIST, 'BLON'));
-BLOF_index = find(strcmp(DATALIST, 'BLOF'));
-% 데이터 모으기
 
+% 데이터 모으기
 TRON = RAWDATA{TRON_index};
 TROF = RAWDATA{TROF_index};
 IRON = RAWDATA{IRON_index};
@@ -105,10 +103,8 @@ LICK = RAWDATA{LICK_index};
 LOFF = RAWDATA{LOFF_index};
 ATTK = RAWDATA{ATTK_index};
 ATOF = RAWDATA{ATOF_index};
-BLON = RAWDATA{BLON_index};
-BLOF = RAWDATA{BLOF_index};
 
-clearvars TRON_index TROF_index IRON_index IROF_index LICK_index LOFF_index ATTK_index ATOF_index BLON_index BLOF_index
+clearvars TRON_index TROF_index IRON_index IROF_index LICK_index LOFF_index ATTK_index ATOF_index
 clearvars RAWDATA
 
 
