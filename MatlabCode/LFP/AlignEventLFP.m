@@ -1,4 +1,16 @@
-targetdir = uigetdir(); % 같은 위치에 EVENT 폴더가 없으면 사용자에게 물어봄.
+%% AlignEventLFP
+% Align LFP data to first LICK, last LOFF, last IROF, first ATTK
+% 2018-AUG-20 Knowblesse
+
+%% PARAMETERS
+TIMEWINDOW_LEFT = -4; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
+TIMEWINDOW_RIGHT = +4; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
+fs = 1018;
+
+%% Get EVENT Folder Location
+if ~exist('targetdir','var')
+    targetdir = uigetdir('','EVENT file location'); 
+end
 [ParsedData, ~, ~, ~, ~] = BehavDataParser(targetdir);
 
 clearvars targetdir;
@@ -53,17 +65,16 @@ timepoint_LOFF(timepoint_LOFF == 0) = []; % Lick 데이터가 없는(LICK이 없는) tria
 timepoint_IROF(timepoint_IROF == 0) = []; % IR 데이터가 없는(IRON이 없는) trial은 날림.
 timepoint_ATTK(timepoint_ATTK == 0) = []; % Attack 데이터가 없는(ATTK가 없는) trial은 날림.
 
-
-load('C:\VCF\Lobster\data\processedData\lfp\0613.mat');
+%% Load LFP mat file
+if ~exist('LFPmatPath','var')
+    [filename, pathname] = uigetfile('*.mat','LFP.mat File Location');
+    LFPmatPath = strcat(pathname,filename);
+end
+load(LFPmatPath);
+clearvars LFPmatPath;
 
 %% 각 timewindow 마다 해당 구간에 속하는 spike들을 모조리 확인.
 
-%% PARAMETERS
-TIMEWINDOW_LEFT = -4; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
-TIMEWINDOW_RIGHT = +4; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
-TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
-
-fs = sum(TIME<1); % 정수 fs를 만듦.
 ltp_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LICK),16);
 ltp_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LOFF),16);
 ltp_IROF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_IROF),16);
@@ -71,37 +82,31 @@ ltp_ATTK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_ATTK),16)
 
 % LICK
 for tw = 1 : numel(timepoint_LICK) % 매 timepoint마다 
+    [~,ind] = min(abs(TIME - (timepoint_LICK(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        [~,ind] = min(abs(TIME - (timepoint_LICK(1)+TIMEWINDOW_LEFT)));
         ltp_LICK(:,tw,ch) = LFP(ind:ind+size(ltp_LICK,1)-1,ch);
     end
 end
 % LOFF
 for tw = 1 : numel(timepoint_LOFF) % 매 timepoint마다 
+    [~,ind] = min(abs(TIME - (timepoint_LOFF(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        [~,ind] = min(abs(TIME - (timepoint_LOFF(1)+TIMEWINDOW_LEFT)));
         ltp_LOFF(:,tw,ch) = LFP(ind:ind+size(ltp_LOFF,1)-1,ch);
     end
 end
 % IROF
 for tw = 1 : numel(timepoint_IROF) % 매 timepoint마다 
+    [~,ind] = min(abs(TIME - (timepoint_IROF(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        [~,ind] = min(abs(TIME - (timepoint_IROF(1)+TIMEWINDOW_LEFT)));
         ltp_IROF(:,tw,ch) = LFP(ind:ind+size(ltp_IROF,1)-1,ch);
     end
 end
 % ATTK
 for tw = 1 : numel(timepoint_ATTK) % 매 timepoint마다 
+    [~,ind] = min(abs(TIME - (timepoint_ATTK(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        [~,ind] = min(abs(TIME - (timepoint_ATTK(1)+TIMEWINDOW_LEFT)));
         ltp_ATTK(:,tw,ch) = LFP(ind:ind+size(ltp_ATTK,1)-1,ch);
     end
 end
 
-figure(2)
-for i = 1 : 5
-    subplot(5,1,i);
-    plot(mean(ltp_IROF(:,:,i),2));
-    hold on;
-    line([size(ltp_IROF,1)/2,size(ltp_IROF,1)/2],ylim);
-end
+clearvars filename ch fs FS ind LFP pathname TIME timepoint_* TIME* tw
