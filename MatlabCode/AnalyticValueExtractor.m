@@ -8,7 +8,8 @@ end
 MIN_LICK_CLUSTER_INTERVAL = 0.3; % 히스토그램 분석후 97.6035% 가 속하는 0.3초로 정함.
 MIN_IR_CLUSTER_INTERVAL = 1.3; % 히스토그램 분석후 67.8255% 가 속하는 1.3초로 정함.
 MIN_1MIN_TIMEOUT_DURATION = 55; % 1min timeout으로 인정하기 위한 최소의 시간.
-SEPARATE_3SEC_6SEC_ESCAPE = false; % 3초 escape과 6초 escape을 구별할지.
+SEPARATE_3SEC_6SEC_ESCAPE = true; % 3초 escape과 6초 escape을 구별할지.
+KEEP_ONLY_A_AND_E = true; % Avoid와 Escape이 아닌 trial은 모두 제거.
 
 %% AnalyticValues
 numTrial = size(ParsedData,1);
@@ -70,9 +71,9 @@ for trial = 1 : size(ParsedData,1)
                 % C : Escape on 3sec trial
                 % D : Escape on 6sec trial
                 if Attack(1) - Licks(1) >= 4.5 % 첫 Lick과 Attack의 사이가 4.5초 이하인경우
-                    behaviorResult(trial) = 'C';
+                    behaviorResult(trial) = 'C'; % 6초 Escape
                 else
-                    behaviorResult(trial) = 'D';
+                    behaviorResult(trial) = 'D'; % 3초 Escape
                 end
             else
                 behaviorResult(trial) = 'E';
@@ -82,6 +83,12 @@ for trial = 1 : size(ParsedData,1)
         end
     end
 end
+
+if KEEP_ONLY_A_AND_E
+    behaviorResult(behaviorResult == 'G') = [];
+    behaviorResult(behaviorResult == 'M') = [];
+end
+
 
 clearvars Attack Attacks IAttackIROFI IIRI ILicksI IRs k Licks MIN_1MIN_TIMEOUT_DURATION MIN_IR_CLUSTER_INTERVAL MIN_LICK_CLUSTER_INTERVAL numTrial trial Trials Trial
         
