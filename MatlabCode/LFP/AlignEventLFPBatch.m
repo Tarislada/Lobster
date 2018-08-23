@@ -1,4 +1,5 @@
-%% AlignEventLFPBatch
+%% deprecated
+% AlignEventLFPBatch
 % Event Data Loc
 loc0 = 'C:\VCF\Lobster\data\rawdata\';
 loc1 = dir(loc0);

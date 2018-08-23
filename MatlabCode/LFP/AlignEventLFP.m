@@ -75,37 +75,37 @@ clearvars LFPmatPath;
 
 %% 각 timewindow 마다 해당 구간에 속하는 spike들을 모조리 확인.
 
-ltp_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LICK),16);
-ltp_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LOFF),16);
-ltp_IROF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_IROF),16);
-ltp_ATTK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_ATTK),16);
+lfp_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LICK),16);
+lfp_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LOFF),16);
+lfp_IROF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_IROF),16);
+lfp_ATTK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_ATTK),16);
 
 % LICK
 for tw = 1 : numel(timepoint_LICK) % 매 timepoint마다 
     [~,ind] = min(abs(TIME - (timepoint_LICK(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        ltp_LICK(:,tw,ch) = LFP(ind:ind+size(ltp_LICK,1)-1,ch);
+        lfp_LICK(:,tw,ch) = LFP(ind:ind+size(lfp_LICK,1)-1,ch);
     end
 end
 % LOFF
 for tw = 1 : numel(timepoint_LOFF) % 매 timepoint마다 
     [~,ind] = min(abs(TIME - (timepoint_LOFF(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        ltp_LOFF(:,tw,ch) = LFP(ind:ind+size(ltp_LOFF,1)-1,ch);
+        lfp_LOFF(:,tw,ch) = LFP(ind:ind+size(lfp_LOFF,1)-1,ch);
     end
 end
 % IROF
 for tw = 1 : numel(timepoint_IROF) % 매 timepoint마다 
     [~,ind] = min(abs(TIME - (timepoint_IROF(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        ltp_IROF(:,tw,ch) = LFP(ind:ind+size(ltp_IROF,1)-1,ch);
+        lfp_IROF(:,tw,ch) = LFP(ind:ind+size(lfp_IROF,1)-1,ch);
     end
 end
 % ATTK
 for tw = 1 : numel(timepoint_ATTK) % 매 timepoint마다 
     [~,ind] = min(abs(TIME - (timepoint_ATTK(tw)+TIMEWINDOW_LEFT)));
     for ch = 1 : 16
-        ltp_ATTK(:,tw,ch) = LFP(ind:ind+size(ltp_ATTK,1)-1,ch);
+        lfp_ATTK(:,tw,ch) = LFP(ind:ind+size(lfp_ATTK,1)-1,ch);
     end
 end
 
