@@ -1,9 +1,10 @@
 %% AlignEvent_Separate Avoid and Escape
-% A2-3 JiHoon Version
+% Subscript of AlignEvent script
 % trial을 Avoid Escape으로 나누고 특정 이벤트 시점 전후로 spike 데이터를 정렬한 후 zscore를 계산, aligned_new_Avoid, aligned_new_Escape 폴더에 저장.
+% 2018 Knowblesse
 
 AnalyticValueExtractor;
-TYPE = ['A','C','D'];
+TYPE = ['A','E'];
 for trialtype = TYPE
     %% Separate ParsedData into trialtype
     ParsedData_separated = cell(sum(behaviorResult == trialtype),size(ParsedData,2));
@@ -77,7 +78,14 @@ for trialtype = TYPE
         load(Paths{f}); % Unit data를 로드. SU 파일이 존재.
         spikes = table2array(SU(:,1)); % spike timestamp 들을 저장.
         clearvars SU;
-
+        
+        % Get sudo session firing rate
+        Z.FR = numel(spikes) / (spikes(end) - spikes(1));
+        % Since this script uses Unit data.mat's SU variable,
+        % the starting point and the ending point of the session can not be
+        % retrived. So instead of using {(num spike) / (total exp time)},
+        % this script uses {(num spike) / (last spike time - first spike time)}.
+        
         %% 각 timewindow 마다 해당 구간에 속하는 spike들을 모조리 확인.
         timebin_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
         timebin_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
@@ -123,6 +131,12 @@ for trialtype = TYPE
         Z.LOFF = zscore(timebin_LOFF ./ numel(timepoint_LOFF)); 
         Z.IROF = zscore(timebin_IROF ./ numel(timepoint_IROF));
         Z.ATTK = zscore(timebin_ATTK ./ numel(timepoint_ATTK)); 
+    
+        %% Calculate firing rate
+        Z.LICK_fr = sum(timebin_LICK) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_LICK));
+        Z.LOFF_fr = sum(timebin_LOFF) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_LOFF));
+        Z.IROF_fr = sum(timebin_IROF) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_IROF));
+        Z.ATTK_fr = sum(timebin_ATTK) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_ATTK));
 
         if exist(strcat(pathname,'aligned_new_',trialtype),'dir') == 0 % aligned 폴더가 존재하지 않으면
             mkdir(strcat(pathname,'aligned_new_',trialtype)); % 만들어줌

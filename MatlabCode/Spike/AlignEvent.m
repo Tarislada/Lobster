@@ -9,8 +9,9 @@ TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
 
 %% Unit data 경로 선택
 if exist('targetfiles','var') == 0 % 미리 targetfiles를 정하지 않은 경우
-    [filename, pathname] = uigetfile('*.mat', 'MultiSelect', 'on');
+    [filename, pathname] = uigetfile('*.mat', 'Select Unit Data .mat', 'MultiSelect', 'on');
     if isequal(filename,0) % 선택하지 않은 경우 취소
+        clearvars filename pathname
         return;
     end
     Paths = strcat(pathname,filename);
@@ -29,8 +30,9 @@ end
 if exist(strcat(pathname,'EVENTS'),'dir') == 7 % 같은 위치에 EVENTS 폴더가 있음
     targetdir = strcat(pathname,'EVENTS');
 else
-    targetdir = uigetdir(); % 같은 위치에 EVENT 폴더가 없으면 사용자에게 물어봄.
+    targetdir = uigetdir('','Select EVENT folder'); % 같은 위치에 EVENT 폴더가 없으면 사용자에게 물어봄.
     if isequal(targetdir,0)
+        clearvars targetdir
         return;
     end
 end
@@ -74,7 +76,7 @@ for t = 1 : numTrial
     end
     
     %% ATTK
-    if ~isempty(ParsedData{t,4}) %LICK 정보가 비어있지 않으면,
+    if ~isempty(ParsedData{t,4}) %ATTK 정보가 비어있지 않으면,
         temp = ParsedData{t,4};
         timepoint_ATTK(t) = temp(1) + ParsedData{t,1}(1); % ATTK 데이터 = first ATTK 를 대입.
         clearvars temp;
@@ -94,18 +96,26 @@ timewindow_LOFF = [timepoint_LOFF+TIMEWINDOW_LEFT,timepoint_LOFF+TIMEWINDOW_RIGH
 timewindow_IROF = [timepoint_IROF+TIMEWINDOW_LEFT,timepoint_IROF+TIMEWINDOW_RIGHT];
 timewindow_ATTK = [timepoint_ATTK+TIMEWINDOW_LEFT,timepoint_ATTK+TIMEWINDOW_RIGHT];
 
-%% 각 Unit data 별로 timewindow에 들어가는 데이터를 뽑아냄.
+%% 각 Unit data 별로 데이터를 뽑아냄. 
 for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     %% Unit Data Load
     load(Paths{f}); % Unit data를 로드. SU 파일이 존재.
     spikes = table2array(SU(:,1)); % spike timestamp 들을 저장.
     clearvars SU;
-
-    %% 각 timewindow 마다 해당 구간에 속하는 spike들을 모조리 확인.
+    
+    % Get sudo session firing rate
+    Z.FR = numel(spikes) / (spikes(end) - spikes(1));
+    % Since this script uses Unit data.mat's SU variable,
+    % the starting point and the ending point of the session can not be
+    % retrived. So instead of using {(num spike) / (total exp time)},
+    % this script uses {(num spike) / (last spike time - first spike time)}.
+    
+    %% timewindow를 TIMEWINDOW_BIN으로 나눈 timebin_* 변수를 생성.
     timebin_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_IROF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_ATTK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
+    
     % LICK
     for tw = 1 : numel(timepoint_LICK) % 매 window마다 
         % window를 bin으로 나눈 tempbin을 만들고
@@ -147,6 +157,12 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     Z.IROF = zscore(timebin_IROF ./ numel(timepoint_IROF));
     Z.ATTK = zscore(timebin_ATTK ./ numel(timepoint_ATTK)); 
     
+    %% Calculate firing rate
+    Z.LICK_fr = sum(timebin_LICK) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_LICK));
+    Z.LOFF_fr = sum(timebin_LOFF) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_LOFF));
+    Z.IROF_fr = sum(timebin_IROF) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_IROF));
+    Z.ATTK_fr = sum(timebin_ATTK) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_ATTK));
+    
     if exist(strcat(pathname,'aligned_new'),'dir') == 0 % aligned 폴더가 존재하지 않으면
         mkdir(strcat(pathname,'aligned_new')); % 만들어줌
     end
@@ -164,15 +180,15 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     p2 = p1(end-2);
     p3 = pathname(1:p2);
     
-    if isSuc 
-        p = strcat(p3,'processedData','\Suc');
+    if isSuc % Sucrose trial 이면
+        p = strcat(p3,'processedData','\Suc'); % Suc에 저장
         clearvars p1 p2 p3
         if exist(p,'dir') == 0 % 폴더가 존재하지 않으면
             mkdir(p); % 만들어줌
         end
         save(strcat(p,'\',filename_date,'_',filename_cellnum,'_aligned.mat'),'Z');
-    else
-        p = strcat(p3,'processedData','\All');
+    else % Sucrose trial이 아니면
+        p = strcat(p3,'processedData','\All'); % All에 저장
         clearvars p1 p2 p3
         if exist(p,'dir') == 0 % 폴더가 존재하지 않으면
             mkdir(p); % 만들어줌
