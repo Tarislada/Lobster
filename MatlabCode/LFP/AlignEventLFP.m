@@ -73,7 +73,7 @@ end
 load(LFPmatPath);
 clearvars LFPmatPath;
 
-%% 각 timewindow 마다 해당 구간에 속하는 spike들을 모조리 확인.
+%% 각 timewindow 마다 해당 구간에 속하는 lfp data들을 모조리 확인.
 
 lfp_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LICK),16);
 lfp_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*fs,numel(timepoint_LOFF),16);
