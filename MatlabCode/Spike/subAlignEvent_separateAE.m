@@ -3,7 +3,7 @@
 % trial을 Avoid Escape으로 나누고 특정 이벤트 시점 전후로 spike 데이터를 정렬한 후 zscore를 계산, aligned_new_Avoid, aligned_new_Escape 폴더에 저장.
 % 2018 Knowblesse
 
-AnalyticValueExtractor;
+behaviorResult = AnalyticValueExtractor(ParsedData,false, false);
 TYPE = ['A','E'];
 for trialtype = TYPE
     %% Separate ParsedData into trialtype

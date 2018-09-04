@@ -27,7 +27,7 @@ for fol = 1 : numel(loc2_new) % 모든 폴더에 대해서
     targetdir = strcat(loc0,loc2_new{fol},'\EVENTS');
     LFPmatPath = strcat(matloc0,loc2_new{fol},'.mat');
     AlignEventLFP;
-    AnalyticValueExtractor;
+    behaviorResult = AnalyticValueExtractor(ParsedData,false,true);
     LFP_ALL{1,fol} = lfp_IROF;
     AE{1,fol} = behaviorResult;
     fprintf('%5.2f%%\n',fol/numel(loc2_new)*100);

@@ -19,8 +19,9 @@ numTrial = size(ParsedData,1);
 behaviorResult = char(zeros(numTrial,1)); % A : Avoid | E : Escape | M : 1min timeout | G : Give up| N : No Lick
 % for every trials
 for trial = 1 : size(ParsedData,1)
+    IRs = ParsedData{trial,2};
+    Licks = ParsedData{trial,3};
 %     %% IR Cluster
-%     IRs = ParsedData{trial,2};
 %     if isempty(IRs) % IR 이 하나도 없으면,
 %         numIRClusters(trial) = 0;
 %         %continue;
@@ -32,7 +33,6 @@ for trial = 1 : size(ParsedData,1)
 %     end
 %         
 %     %% Lick Cluster
-%     Licks = ParsedData{trial,3};
 %     if isempty(Licks) % Lick 이 하나도 없으면,
 %         numLickClusters(trial) = 0;
 %         %continue;
