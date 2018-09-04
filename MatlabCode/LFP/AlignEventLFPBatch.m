@@ -1,5 +1,4 @@
-%% deprecated
-% AlignEventLFPBatch
+%% AlignEventLFPBatch
 % Event Data Loc
 loc0 = 'C:\VCF\Lobster\data\rawdata\';
 loc1 = dir(loc0);
@@ -8,37 +7,43 @@ loc2 = loc2(3:end);
 
 matloc0 = 'C:\VCF\Lobster\data\processedData\lfp\';
 
-outputdata = cell(1,8148);
-outputdata{1,1} = 'Session';
-outputdata{1,2} = 'Channel';
-outputdata{1,3} = 'Trial';
-outputdata{1,4} = 'Event';
-for i = 5 : 8148
-    outputdata{1,i} = strcat('datapoint_',num2str(i-4));
-end
-
-tagdata = cell(32000,4);
-ltpdata = zeros(32000,8144);
-ccounter = 1;
+%% suc 골라내기
+loc2_new = {}; % suc이 아닌 trial
+loc2_suc = {}; % suc인 trial
 for fol = 1 : numel(loc2) % 모든 폴더에 대해서
     if contains(loc2{fol}, 'suc') % suc 데이터 라면
-        continue; % 스킵
-    else % suc 데이터가 아닌 경우에만
-        targetdir = strcat(loc0,loc2{fol},'\EVENTS');
-        LFPmatPath = strcat(matloc0,loc2{fol},'.mat');
-        AlignEventLFP;
-        AnalyticValueExtractor;
-        for ch = 1 : 16
-            for tr = 1 : size(ltp_IROF,2)
-                tagdata(ccounter,:) = {loc2{fol},ch,tr,strcat('IROF','_',behaviorResult(tr))};
-                ltpdata(ccounter,:) = ltp_IROF(:,tr,ch)';
-                ccounter = ccounter + 1;
-            end
-        end
-        fprintf('%5.2f%%\n',fol/numel(loc2)*100);
-    clearvars behaviorResult ParsedData
+        loc2_suc = [loc2_suc,{loc2{fol}}];
+    else
+        loc2_new = [loc2_new,{loc2{fol}}];
     end
 end
 
-clearvars fol loc* matloc0
+loc2_new(2) = [];
+
+LFP_ALL = cell(1,numel(loc2_new));
+AE = cell(1,numel(loc2_new)); % behaviorResult 를 담는 변수
+%% Non-Suc LFP data (run with AnalyticValueExtractor )
+for fol = 1 : numel(loc2_new) % 모든 폴더에 대해서
+    targetdir = strcat(loc0,loc2_new{fol},'\EVENTS');
+    LFPmatPath = strcat(matloc0,loc2_new{fol},'.mat');
+    AlignEventLFP;
+    AnalyticValueExtractor;
+    LFP_ALL{1,fol} = lfp_IROF;
+    AE{1,fol} = behaviorResult;
+    fprintf('%5.2f%%\n',fol/numel(loc2_new)*100);
+    clearvars behaviorResult ParsedData
+end
+
+%% Suc LFP data
+LFP_SUC_ALL = cell(1,numel(loc2_suc));
+for fol = 1 : numel(loc2_suc)
+    targetdir = strcat(loc0, loc2_suc{fol},'\EVENTS');
+    LFPmatPath = strcat(matloc0, loc2_suc{fol}(1:end-4),'.mat');
+    AlignEventLFP;
+    LFP_SUC_ALL{1,fol} = lfp_IROF;
+    fprintf('%5.2f%%\n',fol/numel(loc2_suc)*100);
+    clearvars behaviorResult ParsedData
+end
+
+clearvars fol loc* matloc0 lfp_* num*
         
