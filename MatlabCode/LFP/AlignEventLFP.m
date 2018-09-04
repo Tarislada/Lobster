@@ -60,10 +60,12 @@ for t = 1 : numTrial
     
 end
 clearvars t numTrial
-timepoint_LICK(timepoint_LICK == 0) = []; % Lick 데이터가 없는(LICK이 없는) trial은 날림.
-timepoint_LOFF(timepoint_LOFF == 0) = []; % Lick 데이터가 없는(LICK이 없는) trial은 날림.
-timepoint_IROF(timepoint_IROF == 0) = []; % IR 데이터가 없는(IRON이 없는) trial은 날림.
-timepoint_ATTK(timepoint_ATTK == 0) = []; % Attack 데이터가 없는(ATTK가 없는) trial은 날림.
+% Attack 데이터가 없는(ATTK가 없는) trial은 날림.
+timepoint_LICK(timepoint_ATTK == 0) = []; 
+timepoint_LOFF(timepoint_ATTK == 0) = []; 
+timepoint_IROF(timepoint_IROF == 0) = [];
+warning('임시로 코드를 바꿈.')
+timepoint_ATTK(timepoint_ATTK == 0) = []; 
 
 %% Load LFP mat file
 if ~exist('LFPmatPath','var')
