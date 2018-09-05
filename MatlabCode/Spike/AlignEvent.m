@@ -116,6 +116,9 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     timebin_IROF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_ATTK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     
+    %% timewindow 내에 해당하는 rawdata를 저장하기 위한 cell
+    raw_IROF = cell(numel(timepoint_IROF),1);
+    
     % LICK
     for tw = 1 : numel(timepoint_LICK) % 매 window마다 
         % window를 bin으로 나눈 tempbin을 만들고
@@ -139,6 +142,9 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
         for twb = 1 : numel(tempbin)-1 % 각 bin에 들어가는 spike의 수를 센다
             timebin_IROF(twb) = timebin_IROF(twb) + sum(and(spikes >= tempbin(twb), spikes < tempbin(twb+1)));
         end
+        % rawdata를 그냥 저장
+        raw_IROF{tw,1} = spikes(and(spikes >= timewindow_IROF(tw,1), spikes < timewindow_IROF(tw,2)))...
+            - timewindow_IROF(tw,1);
     end
     %ATTK
     for tw = 1 : numel(timepoint_ATTK) % 매 window마다 
@@ -156,6 +162,9 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     Z.LOFF = zscore(timebin_LOFF ./ numel(timepoint_LOFF)); 
     Z.IROF = zscore(timebin_IROF ./ numel(timepoint_IROF));
     Z.ATTK = zscore(timebin_ATTK ./ numel(timepoint_ATTK)); 
+    
+    %% Calculate raw firingrate with moving window
+    Z.raw_IROF = raw_IROF;
     
     %% Calculate firing rate
     Z.LICK_fr = sum(timebin_LICK) ./ ((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)*numel(timepoint_LICK));
