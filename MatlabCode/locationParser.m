@@ -7,7 +7,7 @@ function result = locationParser(dodraw)
 %   필요하다. @Knowblesse 2018
 %   result 값은 총 6개의 행으로 구성되며, 구성은 아래와 같다.
 %   [ 시간, Red X, Red Y, Green X, Green Y, Head Direction Degree ]
-
+warning('Depricated. Use <RVn1_locationParser.m>');
 
 %% Load Data
 [filename, pathname] = uigetfile('.csv','위치파일 "*XYXY.csv 파일을 선택해 주세요.');
