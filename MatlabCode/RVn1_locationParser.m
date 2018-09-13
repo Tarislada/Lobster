@@ -61,4 +61,6 @@ D0 = arranged_D0;
         
 clearvars i channelarray *_reshaped chn arranged_D0 filename num_datapoint
 
+Location = {D0(:,3),D0(:,4),D0(:,7),D0(:,8)};
 
+clearvars D0

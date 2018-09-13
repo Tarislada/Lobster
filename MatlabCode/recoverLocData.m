@@ -6,11 +6,10 @@ function [ recoveredLocData ] = recoverLocData( originalLocData, X_RANGE, Y_RANG
 % @Knowblesse 2018
 
 % argument :
-% originalLocData cell(2,2);
+% originalLocData cell(4);
 %{
     structures : 
-    {1:X1}{3:X2}
-    {2:Y1}{4:Y2}
+    {1:X1,2:Y1,3:X2,4:Y2}
 %}
 
 
