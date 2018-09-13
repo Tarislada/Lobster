@@ -26,34 +26,22 @@ clearvars f;
 
 %% FR 1 이하는 제거
 newNeurons = {};
-for f = 1 : 580
-    if and(Neurons{f}.FR >= 1, Neurons{f}.FR < 10)
+for f = 1 : numel(Neurons)
+    if and(Neurons{f}.FR >= 0.5, Neurons{f}.FR < 10)
         newNeurons = [newNeurons;Neurons{f}];
     end
 end
+% 
+% Neurons = newNeurons;
+% numNeuron = size(newNeurons,1);
+% 
+% clearvars newNeurons;
 
-Neurons = newNeurons;
-numNeuron = size(newNeurons,1);
-
-clearvars newNeurons;
-
-%% 각 이벤트에 align된 데이터를 가지고 matrix 만들기
-%TRON_mat = zeros(numNeuron,numel(Neurons{1}.TRON));
-%IRON_mat = zeros(numNeuron,numel(Neurons{1}.IRON));
-%LICK_mat = zeros(numNeuron,numel(Neurons{1}.LICK));
-%LOFF_mat = zeros(numNeuron,numel(Neurons{1}.LOFF));
-IROF_mat = zeros(numNeuron,numel(Neurons{1}.IROF));
-%ATTK_mat = zeros(numNeuron,numel(Neurons{1}.ATTK));
-%TROF_mat = zeros(numNeuron,numel(Neurons{1}.TROF));
-
-for n = 1 : numNeuron
-    %TRON_mat(n,:) = Neurons{n}.TRON;
-    %IRON_mat(n,:) = Neurons{n}.IRON;
-    %LICK_mat(n,:) = Neurons{n}.LICK;
-    %LOFF_mat(n,:) = Neurons{n}.LOFF;
-    IROF_mat(n,:) = Neurons{n}.IROF;
-    %ATTK_mat(n,:) = Neurons{n}.ATTK;
-    %TROF_mat(n,:) = Neurons{n}.TROF;
-end
-
-clearvars n
+% %% 이벤트에 align된 데이터를 가지고 matrix 만들기
+% IROF_mat = zeros(numNeuron,numel(Neurons{1}.IROF));
+% 
+% for n = 1 : numNeuron
+%     IROF_mat(n,:) = Neurons{n}.IROF;
+% end
+% 
+% clearvars n
