@@ -1,5 +1,5 @@
 %% RVn1.csv 에서 location 뽑아내기
-
+% Bridge에서 추출한 RVn1.csv 파일을 Parsing 해서 Location data를 추출
 
 %% Load Data
 [filename, pathname] = uigetfile('.csv','위치파일 "*RVn1.csv 파일을 선택해 주세요.');
