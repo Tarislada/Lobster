@@ -41,11 +41,6 @@ for n = 1 : numNeuron
 end
 
 
-
-
-
-% 
-% 
 % numTrial = 85;
 % 
 % window = TIMEWINDOW_LEFT : TIMEWINDOW_BIN : TIMEWINDOW_RIGHT;
