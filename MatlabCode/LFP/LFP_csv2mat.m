@@ -69,12 +69,15 @@ for f = 1 : numel(Paths)
         temp = linspace(time_reshaped(1,i),time_reshaped(1,i+1),128+1);
         TIME( 128*(i-1)+1 : 128*i, 1 ) = temp(1:end-1)';
     end
+    temp = linspace(time_reshaped(1,i+1), time_reshaped(1,i+1) + time_reshaped(1,1),128+1);
+    TIME( 128*(i+1-1)+1 : 128*(i+1), 1 ) = temp(1:end-1)';
     clearvars i temp time_reshaped
 
     % LFP 추출
     LFP = zeros(128*num_datapoint,16);
     for i = 1 : num_datapoint
-        for chn = 1 : num_chan            LFP( 128*(i-1)+1 : 128*i, chan_reshaped(chn,i) ) = data_reshaped(:,chn,i);
+        for chn = 1 : num_chan            
+            LFP( 128*(i-1)+1 : 128*i, chan_reshaped(chn,i) ) = data_reshaped(:,chn,i);
         end
     end
 
@@ -91,5 +94,7 @@ for f = 1 : numel(Paths)
             mkdir(p); % 만들어줌
     end
     save(strcat(p,'\',filename{f}(1:end-4),'.mat'),'FS','LFP','TIME');
+    fprintf('%4.2f%% %s\n',f/numel(Paths)*100,filename{f});
 end
+fprintf('==================COMPLETE====================\n');
 clearvars Paths delimiter startRow formatSpec

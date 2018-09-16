@@ -3,9 +3,9 @@ TARGET_EVENT = 'IROF';
 
 numA = eval(strcat('size(A.',TARGET_EVENT,',1);'));
 numE = eval(strcat('size(E.',TARGET_EVENT,',1);'));
-numS = eval(strcat('size(S.',TARGET_EVENT,',1);'));
-EVENT = eval(strcat('[A.',TARGET_EVENT,';E.',TARGET_EVENT,';S.',TARGET_EVENT,'];'));
-%EVENT = eval(strcat('[A.',TARGET_EVENT,';E.',TARGET_EVENT,'];'));
+%numS = eval(strcat('size(S.',TARGET_EVENT,',1);'));
+%EVENT = eval(strcat('[A.',TARGET_EVENT,';E.',TARGET_EVENT,';S.',TARGET_EVENT,'];'));
+EVENT = eval(strcat('[A.',TARGET_EVENT,';E.',TARGET_EVENT,'];'));
 
 coeff = pca(EVENT);
 
@@ -40,3 +40,7 @@ for i = 1 : numA
     hold on;
     scatter3(PC{1}(numA+i),PC{2}(numA+i),PC{3}(numA+i),'g','*');
 end
+
+xlabel('PC1');
+ylabel('PC2');
+zlabel('PC3');

@@ -11,6 +11,8 @@ formatSpec = '%f%[^\n]';
 spikes = textscan(fileID,formatSpec, 'Delimiter', ',', 'ReturnOnError',false);
 spikes = spikes{1};
 
+fclose(fileID);
+
 clear filename pathname fileID formatSpec
 
 %% Find Indexes
