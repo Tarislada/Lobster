@@ -3,8 +3,8 @@
 % 특정 이벤트 시점 전후로 spike 데이터를 정렬한 후 zscore를 계산, aligned_new 폴더에 저장.
 
 %% PARAMETERS
-TIMEWINDOW_LEFT = -4; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
-TIMEWINDOW_RIGHT = +4; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
+TIMEWINDOW_LEFT = -2; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
+TIMEWINDOW_RIGHT = +2; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
 TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
 
 %% Unit data 경로 선택
@@ -43,11 +43,21 @@ clearvars targetdir;
 
 %% Find Time window in each trial
 numTrial = size(ParsedData,1); % 총 trial 수
+timepoint_IRON = zeros(numTrial,1); % IRON 시점의 정보를 담는 변수
 timepoint_LICK = zeros(numTrial,1); % LICK 시점의 정보를 담는 변수
 timepoint_LOFF = zeros(numTrial,1); % LOFF 시점의 정보를 담는 변수
 timepoint_IROF = zeros(numTrial,1); % IROF 시점의 정보를 담는 변수
 timepoint_ATTK = zeros(numTrial,1); % ATTK 시점의 정보를 담는 변수
 for t = 1 : numTrial
+    %% IRON
+    if ~isempty(ParsedData{t,2}) %IR 정보가 비어있지 않으면,
+        temp = ParsedData{t,2};
+        timepoint_IRON(t) = temp(1) + ParsedData{t,1}(1); % 가장 처음의 LICK 데이터 = first LICK을 대입.
+        clearvars temp;
+    else %IR 정보가 비어있으면
+        timepoint_IRON(t) = 0;
+    end
+    
     %% LICK
     if ~isempty(ParsedData{t,3}) %LICK 정보가 비어있지 않으면,
         temp = ParsedData{t,3};
@@ -86,11 +96,13 @@ for t = 1 : numTrial
     
 end
 clearvars t numTrial
+timepoint_IRON(timepoint_IRON == 0) = []; % IR 데이터가 없는 trial은 날림.
 timepoint_LICK(timepoint_LICK == 0) = []; % Lick 데이터가 없는(LICK이 없는) trial은 날림.
 timepoint_LOFF(timepoint_LOFF == 0) = []; % Lick 데이터가 없는(LICK이 없는) trial은 날림.
-timepoint_IROF(timepoint_IROF == 0) = []; % IR 데이터가 없는(IRON이 없는) trial은 날림.
+timepoint_IROF(timepoint_IROF == 0) = []; % IR 데이터가 없는 trial은 날림.
 timepoint_ATTK(timepoint_ATTK == 0) = []; % Attack 데이터가 없는(ATTK가 없는) trial은 날림.
 %---- 주의 ----% 이 때문에 trial 갯수와 안맞거나 서로 다른 Event 끼리는 데이터가 밀릴 수 있음.
+timewindow_IRON = [timepoint_IRON+TIMEWINDOW_LEFT,timepoint_IRON+TIMEWINDOW_RIGHT];
 timewindow_LICK = [timepoint_LICK+TIMEWINDOW_LEFT,timepoint_LICK+TIMEWINDOW_RIGHT];
 timewindow_LOFF = [timepoint_LOFF+TIMEWINDOW_LEFT,timepoint_LOFF+TIMEWINDOW_RIGHT];
 timewindow_IROF = [timepoint_IROF+TIMEWINDOW_LEFT,timepoint_IROF+TIMEWINDOW_RIGHT];
@@ -111,13 +123,27 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     % this script uses {(num spike) / (last spike time - first spike time)}.
     
     %% timewindow를 TIMEWINDOW_BIN으로 나눈 timebin_* 변수를 생성.
+    timebin_IRON = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_LICK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_LOFF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_IROF = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     timebin_ATTK = zeros((TIMEWINDOW_RIGHT-TIMEWINDOW_LEFT)/TIMEWINDOW_BIN,1);
     
     %% timewindow 내에 해당하는 rawdata를 저장하기 위한 cell
+    raw_IRON = cell(numel(timepoint_IRON),1);
     raw_IROF = cell(numel(timepoint_IROF),1);
+    
+    % IRON
+    for tw = 1 : numel(timepoint_IRON) % 매 window마다 
+        % window를 bin으로 나눈 tempbin을 만들고
+        tempbin = linspace(timewindow_IRON(tw,1),timewindow_IRON(tw,2),numel(timebin_IRON)+1);
+        for twb = 1 : numel(tempbin)-1 % 각 bin에 들어가는 spike의 수를 센다
+            timebin_IRON(twb) = timebin_IRON(twb) + sum(and(spikes >= tempbin(twb), spikes < tempbin(twb+1)));
+        end
+        % rawdata를 그냥 저장
+        raw_IRON{tw,1} = spikes(and(spikes >= timewindow_IRON(tw,1), spikes < timewindow_IRON(tw,2)))...
+            - timewindow_IRON(tw,1);
+    end
     
     % LICK
     for tw = 1 : numel(timepoint_LICK) % 매 window마다 
@@ -127,6 +153,7 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
             timebin_LICK(twb) = timebin_LICK(twb) + sum(and(spikes >= tempbin(twb), spikes < tempbin(twb+1)));
         end
     end
+    
     % LOFF
     for tw = 1 : numel(timepoint_LOFF) % 매 window마다 
         % window를 bin으로 나눈 tempbin을 만들고
@@ -135,6 +162,7 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
             timebin_LOFF(twb) = timebin_LOFF(twb) + sum(and(spikes >= tempbin(twb), spikes < tempbin(twb+1)));
         end
     end
+    
     %IROF
     for tw = 1 : numel(timepoint_IROF) % 매 window마다 
         % window를 bin으로 나눈 tempbin을 만들고
@@ -146,6 +174,7 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
         raw_IROF{tw,1} = spikes(and(spikes >= timewindow_IROF(tw,1), spikes < timewindow_IROF(tw,2)))...
             - timewindow_IROF(tw,1);
     end
+    
     %ATTK
     for tw = 1 : numel(timepoint_ATTK) % 매 window마다 
         % window를 bin으로 나눈 tempbin을 만들고
@@ -158,12 +187,14 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
     clearvars tw twb tempbin spikes
     
     %% calculate Zscore
+    Z.IRON = zscore(timebin_IRON ./ numel(timepoint_IRON)); 
     Z.LICK = zscore(timebin_LICK ./ numel(timepoint_LICK)); 
     Z.LOFF = zscore(timebin_LOFF ./ numel(timepoint_LOFF)); 
     Z.IROF = zscore(timebin_IROF ./ numel(timepoint_IROF));
     Z.ATTK = zscore(timebin_ATTK ./ numel(timepoint_ATTK)); 
     
     %% Calculate raw firingrate with moving window
+    Z.raw_IRON = raw_IRON;
     Z.raw_IROF = raw_IROF;
     
     %% Calculate firing rate
