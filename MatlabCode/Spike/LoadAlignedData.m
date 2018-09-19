@@ -27,8 +27,9 @@ clearvars f;
 %% FR 1 이하는 제거
 newNeurons = {};
 for f = 1 : numel(Neurons)
-    if and(Neurons{f}.FR >= 0.5, Neurons{f}.FR < 10)
+    if Neurons{f}.FR >= 0.2
         newNeurons = [newNeurons;Neurons{f}];
+        fprintf('%d ',f);
     end
 end
 % 
