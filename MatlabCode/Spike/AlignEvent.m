@@ -95,7 +95,7 @@ for t = 1 : numTrial
     end
     
 end
-clearvars t numTrial
+clearvars t 
 %LICK 데이터가 없는 trial은 날림.
 timepoint_IRON(timepoint_LICK == 0) = []; 
 timepoint_LICK(timepoint_LICK == 0) = [];
@@ -184,6 +184,15 @@ for f = 1 : numel(Paths) % 선택한 각각의 Unit Data에 대해서...
             timebin_ATTK(twb) = timebin_ATTK(twb) + sum(and(spikes >= tempbin(twb), spikes < tempbin(twb+1)));
         end
     end
+    
+    %Trial Firing Rate
+    tot_spike = 0; % trial 시작과 끝 내의 누적 spike 수
+    tot_time = 0; % trial 시작과 끝 동안의 누적 시간
+    for t = 1 : numTrial
+        tot_time = tot_time + (ParsedData{t,1}(end) - ParsedData{t,1}(1));
+        tot_spike = tot_spike + sum(and(spikes >= ParsedData{t,1}(1), spikes < ParsedData{t,1}(end)));
+    end
+    Z.FR_trial = tot_spike / tot_time;
     
     clearvars tw twb tempbin spikes
     
