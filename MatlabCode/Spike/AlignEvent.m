@@ -98,10 +98,10 @@ end
 clearvars t 
 %LICK 데이터가 없는 trial은 날림.
 timepoint_IRON(timepoint_LICK == 0) = []; 
-timepoint_LICK(timepoint_LICK == 0) = [];
 timepoint_LOFF(timepoint_LICK == 0) = [];
 timepoint_IROF(timepoint_LICK == 0) = []; 
 timepoint_ATTK(timepoint_LICK == 0) = [];
+timepoint_LICK(timepoint_LICK == 0) = [];
 %---- 주의 ----% 이 때문에 trial 갯수와 안맞거나 서로 다른 Event 끼리는 데이터가 밀릴 수 있음.
 timewindow_IRON = [timepoint_IRON+TIMEWINDOW_LEFT,timepoint_IRON+TIMEWINDOW_RIGHT];
 timewindow_LICK = [timepoint_LICK+TIMEWINDOW_LEFT,timepoint_LICK+TIMEWINDOW_RIGHT];
