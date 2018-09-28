@@ -89,7 +89,7 @@ for f = 1 : numel(name_neur) % for each selected units,
     % length of the pseudo_serial_data = 
     % max(add 10sec to last spike, add 10sec to end of the final trial)
     length_pseudo_serial_data = max(spk(end)+10000, ParsedData{end,1}(end)*1000+10000);
-    pseudo_serial_data = zeros(spk(end)+10000,1); 
+    pseudo_serial_data = zeros(length_pseudo_serial_data,1); 
     pseudo_serial_data(spk,1) = 1;
     clearvars length_pseudo_serial_data spk
     
