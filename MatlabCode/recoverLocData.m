@@ -16,11 +16,11 @@ function [ recoveredLocData ] = recoverLocData( originalLocData, X_RANGE, Y_RANG
 %% CONSTANTS 
 % 정상적인 데이터의 범위를 지정해 준다.
 if ~exist('X_RANGE','var')
-    X_RANGE = [100,360];
+    X_RANGE = [100,600];
 end
 
 if ~exist('Y_RANGE','var')
-    Y_RANGE = [160,580];
+    Y_RANGE = [100,400];
 end
 
 %% Check Data Format
