@@ -7,26 +7,28 @@
 */
 
 // Assign Pin Numbers
-const int b_input = 2;
-const int b_output = 3;
-const int t_input = 6;
-const int t_output = 7;
-const int lickPin = 10;
-const int disp_key = 11;
+const int PIN_BLOCK_INPUT = 2;
+const int PIN_BLOCK_OUTPUT = 3;
 
-const int attackPin = 5;
-const int pump_key = 4;
-const int s_i = 9; //sucrose inhibit pin
+const int PIN_TRIAL_INPUT = 6;
+const int PIN_TRIAL_OUTPUT = 7;
+
+const int PIN_LICK_INPUT = 10;
+
+const int PIN_DISP_INPUT = 11;
+
+const int PIN_ATTK_OUTPUT = 5;
+const int PIN_PUMP_OUTPUT = 4;
+const int PIN_STOP_SUCROSE_OUTPUT = 9; //sucrose inhibit pin
 
 
 int start = 0;
 
 int b = 0;
-int bstate = 0;
+bool isBlock = false;
 
 int t = 1;
-int tstate = 0;
-
+bool isTrial = false;
 
 int l = 0;
 
@@ -36,8 +38,6 @@ int s_s = 0; //sucrose state
 
 
 int trcount = 0;
-
-
 
 unsigned long currentT = 0;
 unsigned long btime = 0;
@@ -57,17 +57,18 @@ int sa = 70; //six second attack probability
 
 void setup() 
 {
-  // make the pushbutton's pin an input:
-  pinMode(b_input, INPUT);
-  pinMode(t_input, INPUT);
-  pinMode(lickPin, INPUT);
-  pinMode(disp_key, INPUT);
+  // Block Switch & LED
+  pinMode(PIN_BLOCK_INPUT, INPUT);
+  pinMode(PIN_BLOCK_OUTPUT, OUTPUT);
+  // Trial Sensor & LED
+  pinMode(PIN_TRIAL_INPUT, INPUT);
+  pinMode(PIN_TRIAL_OUTPUT, OUTPUT);
 
-  pinMode(b_output, OUTPUT);
-  pinMode(t_output, OUTPUT);
-  pinMode(attackPin, OUTPUT);
-  pinMode(pump_key, OUTPUT);
-  pinMode(s_i, OUTPUT);
+  pinMode(PIN_LICK_INPUT, INPUT);
+  pinMode(PIN_DISP_INPUT, INPUT);
+  pinMode(PIN_ATTK_OUTPUT, OUTPUT);
+  pinMode(PIN_PUMP_OUTPUT, OUTPUT);
+  pinMode(PIN_STOP_SUCROSE_OUTPUT, OUTPUT);
 
   Serial.begin(9600);
 }
@@ -79,37 +80,37 @@ void loop()
 
   currentT = millis();
 
-  b = digitalRead(b_input);
-  t = digitalRead(t_input);
-  l = digitalRead(lickPin);
-  eventstate = digitalRead(disp_key);
+  b = digitalRead(PIN_BLOCK_INPUT);
+  t = digitalRead(PIN_TRIAL_INPUT);
+  l = digitalRead(PIN_LICK_INPUT);
+  eventstate = digitalRead(PIN_DISP_INPUT);
   
   if(start == 0)
   {
-    digitalWrite(b_output,LOW);
-    digitalWrite(t_output,LOW);
+    digitalWrite(PIN_BLOCK_OUTPUT,LOW);
+    digitalWrite(PIN_TRIAL_OUTPUT,LOW);
     start = 1;
   }
   
 
-  if(b == 0 && bstate == 0 && eventstate == 1)
+  if(b == 0 && bstate && eventstate == 1)
   {
     Serial.println("Attack 100%");
     Serial.println("If attack, 3s or 6s ");
     delay(5);
   }
 
-  if(b == 1 && bstate == 0)
+  if(b == 1 && bstate)
   {
-    digitalWrite(b_output,HIGH);
+    digitalWrite(PIN_BLOCK_OUTPUT,HIGH);
     Serial.println("Block start");
     btime = currentT+500;
     bstate = 1;
   }
 
-  if(b == 0 && bstate == 1 && btime < currentT)
+  if(b == 0 && bstate && btime < currentT)
   {
-    digitalWrite(b_output,LOW);
+    digitalWrite(PIN_BLOCK_OUTPUT,LOW);
     Serial.println("Block end");
     eventstate = 0;
     trcount = 0;
@@ -120,7 +121,7 @@ void loop()
   {
     if(tstate == 0)
     {
-      digitalWrite(t_output,HIGH);
+      digitalWrite(PIN_TRIAL_OUTPUT,HIGH);
       tone(8,1000,1000);
       prob = random(1,101);
 
@@ -139,7 +140,7 @@ void loop()
     
       ttime = currentT+500;
       
-      tstate = 1;
+      tstate = true;
     }
 
     if (Astate == 0 && l == 1 && a_i_state == 0)
@@ -151,36 +152,36 @@ void loop()
 
     if((Astate == 1) && (Aonset < currentT) && a_i_state == 0)
     {
-      digitalWrite(attackPin,HIGH);
+      digitalWrite(PIN_ATTK_OUTPUT,HIGH);
       Serial.print("attack ");
       Serial.println(AT);
       delay(100);
-      digitalWrite(attackPin,LOW);
+      digitalWrite(PIN_ATTK_OUTPUT,LOW);
       a_i_state = 1;
     }
 
     if((Loffset != 0) && (Loffset < currentT) && (s_s == 0))
     {
-      digitalWrite(s_i,HIGH);
+      digitalWrite(PIN_STOP_SUCROSE_OUTPUT,HIGH);
       Serial.print("stop sucrose ");
       Serial.println(maxttime);
       s_s = 1;    
     }
   }
 
-  if(t == 1 && tstate == 1 && ttime < currentT)
+  if(t == 1 && isBlock && ttime < currentT)
   {
-    digitalWrite(t_output,LOW);
+    digitalWrite(PIN_TRIAL_OUTPUT,LOW);
     tstate = 0;
     Astate = 0;
     Loffset = 0;
     s_s = 0;
     a_i_state = 0;
-    digitalWrite(s_i,LOW);
+    digitalWrite(PIN_STOP_SUCROSE_OUTPUT,LOW);
     Serial.println("sucrose available ");
 
-    digitalWrite(pump_key,HIGH);
+    digitalWrite(PIN_PUMP_OUTPUT,HIGH);
     delay(3000);
-    digitalWrite(pump_key,LOW);
+    digitalWrite(PIN_PUMP_OUTPUT,LOW);
   } 
 }
