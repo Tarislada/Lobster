@@ -1,28 +1,31 @@
 /* 
-	Original file from KSW
-	File name : block_trial_controller_v14_pump_trialMix_3s6sattack_suc6_tone.ino
-	Editted by JJH, 2018=11-12
+  Original file from KSW
+  File name : block_trial_controller_v14_pump_trialMix_3s6sattack_suc6_tone.ino
+  Editted by JJH, 2018=11-12
 
-	Arduino Script for the Lobster Controller
+  Arduino Script for the Lobster Controller
 */
+
+// Assign Pin Numbers
+const int b_input = 2;
+const int b_output = 3;
+const int t_input = 6;
+const int t_output = 7;
+const int lickPin = 10;
+const int disp_key = 11;
+
+const int attackPin = 5;
+const int pump_key = 4;
+const int s_i = 9; //sucrose inhibit pin
 
 
 int start = 0;
 
-int b_input = 2;
 int b = 0;
 int bstate = 0;
-int b_output = 3;
 
-
-int t_input = 6;
 int t = 1;
 int tstate = 0;
-int t_output = 7;
-int lickPin = 10;
-int disp_key = 11;
-int pump_key = 4;
-int s_i = 9; //sucrose inhibit pin
 
 
 int l = 0;
@@ -34,7 +37,7 @@ int s_s = 0; //sucrose state
 
 int trcount = 0;
 
-int attackPin = 5;
+
 
 unsigned long currentT = 0;
 unsigned long btime = 0;
@@ -57,11 +60,12 @@ void setup()
   // make the pushbutton's pin an input:
   pinMode(b_input, INPUT);
   pinMode(t_input, INPUT);
+  pinMode(lickPin, INPUT);
+  pinMode(disp_key, INPUT);
+
   pinMode(b_output, OUTPUT);
   pinMode(t_output, OUTPUT);
   pinMode(attackPin, OUTPUT);
-  pinMode(lickPin, INPUT);
-  pinMode(disp_key, INPUT);
   pinMode(pump_key, OUTPUT);
   pinMode(s_i, OUTPUT);
 
@@ -103,14 +107,14 @@ void loop()
     bstate = 1;
   }
 
-	if(b == 0 && bstate == 1 && btime < currentT)
+  if(b == 0 && bstate == 1 && btime < currentT)
   {
     digitalWrite(b_output,LOW);
     Serial.println("Block end");
     eventstate = 0;
     trcount = 0;
     bstate = 0;
-	}
+  }
 
   if(t == 0) //because its a magnetic switch, 0 is on
   {
