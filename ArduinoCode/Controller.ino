@@ -10,7 +10,7 @@
 const int PIN_BLOCK_INPUT = 2;
 const int PIN_BLOCK_OUTPUT = 3;
 
-const int PIN_TRIAL_INPUT = 6;
+const int PIN_DOOR_INPUT = 6;
 const int PIN_TRIAL_OUTPUT = 7;
 
 const int PIN_LICK_INPUT = 10;
@@ -22,13 +22,15 @@ const int PIN_PUMP_OUTPUT = 4;
 const int PIN_STOP_SUCROSE_OUTPUT = 9; //sucrose inhibit pin
 
 
-int start = 0;
+bool isStart = false;
 
 int b = 0;
 bool isBlock = false;
 
-int t = 1;
-bool isTrial = false;
+bool isDoorClosed = true;
+bool isTrialStarted = false;
+
+bool isEvent = false;
 
 int l = 0;
 
@@ -49,8 +51,6 @@ unsigned long Aonset;
 unsigned long Loffset;
 int Astate = 0;
 
-int eventstate = 0;
-
 int prob; 
 int sa = 70; //six second attack probability
 
@@ -61,7 +61,7 @@ void setup()
   pinMode(PIN_BLOCK_INPUT, INPUT);
   pinMode(PIN_BLOCK_OUTPUT, OUTPUT);
   // Trial Sensor & LED
-  pinMode(PIN_TRIAL_INPUT, INPUT);
+  pinMode(PIN_DOOR_INPUT, INPUT); //because its a magnetic switch, 0 is on
   pinMode(PIN_TRIAL_OUTPUT, OUTPUT);
 
   pinMode(PIN_LICK_INPUT, INPUT);
@@ -78,48 +78,48 @@ void loop()
 {
   // read the input pin:
 
-  currentT = millis();
+  currentT = millis(); // read time
 
   b = digitalRead(PIN_BLOCK_INPUT);
-  t = digitalRead(PIN_TRIAL_INPUT);
+  isDoorClosed = digitalRead(PIN_DOOR_INPUT);
   l = digitalRead(PIN_LICK_INPUT);
-  eventstate = digitalRead(PIN_DISP_INPUT);
+  eventstate = digitalRead(PIN_DISP_INPUT);////// eventstate --> isEvent
   
-  if(start == 0)
+  if(!isStart)
   {
     digitalWrite(PIN_BLOCK_OUTPUT,LOW);
     digitalWrite(PIN_TRIAL_OUTPUT,LOW);
-    start = 1;
+    isStart = true;
   }
   
 
-  if(b == 0 && bstate && eventstate == 1)
+  if(b == 0 && !isBlock && isEvent)
   {
     Serial.println("Attack 100%");
     Serial.println("If attack, 3s or 6s ");
     delay(5);
   }
 
-  if(b == 1 && bstate)
+  if(b == 1 && !isBlock)
   {
     digitalWrite(PIN_BLOCK_OUTPUT,HIGH);
     Serial.println("Block start");
     btime = currentT+500;
-    bstate = 1;
+    isBlock = true;
   }
 
-  if(b == 0 && bstate && btime < currentT)
+  if(b == 0 && isBlock && btime < currentT)
   {
     digitalWrite(PIN_BLOCK_OUTPUT,LOW);
     Serial.println("Block end");
-    eventstate = 0;
+    isEvent = false;
     trcount = 0;
-    bstate = 0;
+    isBlock = false;
   }
 
-  if(t == 0) //because its a magnetic switch, 0 is on
+  if(!isDoorClosed) // Door opened = trial started
   {
-    if(tstate == 0)
+    if(!isTrial)
     {
       digitalWrite(PIN_TRIAL_OUTPUT,HIGH);
       tone(8,1000,1000);
@@ -138,9 +138,9 @@ void loop()
       trcount = trcount+1;
       Serial.println(trcount);
     
-      ttime = currentT+500;
+      ttime = currentT+500; // to eliminate magnetic switch gittering
       
-      tstate = true;
+      isTrial = true;
     }
 
     if (Astate == 0 && l == 1 && a_i_state == 0)
@@ -169,10 +169,10 @@ void loop()
     }
   }
 
-  if(t == 1 && isBlock && ttime < currentT)
+  if(t == 1 && isTrial && ttime < currentT)
   {
     digitalWrite(PIN_TRIAL_OUTPUT,LOW);
-    tstate = 0;
+    isTrial = false;
     Astate = 0;
     Loffset = 0;
     s_s = 0;
