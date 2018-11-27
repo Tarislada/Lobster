@@ -1,154 +1,88 @@
-// two HM-1301W motors
 #include <Servo.h> 
- 
-Servo myservo1;
-Servo myservo2;// create servo object to control a servo 
- 
-
 #include <Arduino.h>
 
+// two HM-1301W motors
+Servo myservo1;
+Servo myservo2;
+ 
+const int PIN_ATTACK_OUT = 12;
+const int PIN_PURGE_IN = 2;
+const int PIN_ATTACK_ORDER_IN = 4;
 
-
-
-
-
-//int beam = 7;
-//int beamState=0;
-int attackPin = 12;
-int fixPin = 2;
-
-
-
-
-int attackOrderPin = 4;
-
-int attackState = 0;
-int fixState = 0;
-
-int pos1 = 0;
-int pos2 = 0;
-
-
+const int PIN_SERVO1 = 9;
+const int PIN_SERVO2 = 6;
 
 void setup() 
-{ 
- //pinMode(beam, INPUT);
- pinMode(attackPin, OUTPUT);
- pinMode(attackOrderPin, INPUT);
- pinMode(fixPin, INPUT);
-
-
-
-   
-  myservo1.attach(9);  // attaches the servo on pin 9 to the servo object 
-  myservo2.attach(6);
- 
+{
+  pinMode(PIN_ATTACK_ORDER_IN, INPUT);
+  pinMode(PIN_ATTACK_OUT, OUTPUT);
+  digitalWrite(PIN_ATTACK_OUT,LOW);
   
-    
+  pinMode(PIN_PURGE_IN, INPUT);
+
+  myservo1.attach(PIN_SERVO1);
+  myservo2.attach(PIN_SERVO2);  
 } 
  
 void loop() 
-{ 
+{
+
+  fixState = 
 
 
-attackState = digitalRead(attackOrderPin);
-fixState = digitalRead(fixPin);
-
-
-
-if(attackState == 0)
-   {
-   
-    digitalWrite(attackPin,LOW);
-  
-    myservo1.write(60);                 // sets the servo position according to the scaled value 
+  if(digitalRead(PIN_ATTACK_ORDER_IN) == LOW) // calm
+  {
+    digitalWrite(PIN_ATTACK_OUT,LOW);
+    // Initial State : sets the servo position according to the scaled value
+    myservo1.write(60);
     myservo2.write(145);
-   }
+  }
+  else // attack!
+  {
+    // Send Attack Info
+    digitalWrite(PIN_ATTACK_OUT,HIGH);
 
-  
-
-  
-  
-
-
-
-  
- 
-        
-    if (attackState == 1)
-   {
-          
-    digitalWrite(attackPin,HIGH); // attack!
-    
+    // Perform Attack
     myservo1.write(105);               
     myservo2.write(105);
-
-
     delay(170);
-
-   
-    
-    myservo1.write(60);                 // 
-   myservo2.write(145);
-
+    myservo1.write(60);  
+    myservo2.write(145);
     delay(230);
-
-
-   
-    
-   myservo1.write(105);               
+    myservo1.write(105);               
     myservo2.write(105);
-
     delay(170);
-
-    
-
-    
-    myservo1.write(60);                 // 
+    myservo1.write(60);
     myservo2.write(145);
     delay(230);
 
-
+    // Send Attack Info
     digitalWrite(attackPin,LOW);
-    attackState = 0;
-    
-     }
-     
-
-
-    
-
- if (fixState == 1)
-
- {
-  for (pos1 = 60; pos1 <= 85; pos1 += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    myservo1.write(pos1);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-  for (pos1 = 85; pos1 >= 60; pos1 -= 1) { // goes from 180 degrees to 0 degrees
-    myservo1.write(pos1);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
   }
 
+  // Purge Motor incase of stuck
+  if(digitalRead(PIN_PURGE_IN) == HIGH)
+  {
+    for(int pos1 = 60; pos1 <= 85; pos1 += 1) 
+    {
+      myservo1.write(pos1);
+      delay(15);
+    }
+    for(int pos1 = 85; pos1 >= 60; pos1 -= 1) 
+    {
+      myservo1.write(pos1);
+      delay(15);
+    }
+    for(int pos2 = 145; pos2 >= 125; pos2 -= 1)
+    {
+      myservo2.write(pos2);
+      delay(15);
+    }
 
-
-  for (pos2 = 145; pos2 >= 125; pos2 -= 1) { // goes from 180 degrees to 0 degrees
-    myservo2.write(pos2);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
+    for (pos2 = 125; pos2 <= 145; pos2 += 1)
+    {
+      myservo2.write(pos2);
+      delay(15);
+    }
   }
-
-  for (pos2 = 125; pos2 <= 145; pos2 += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    myservo2.write(pos2);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-
-
-  fixState = 0;
- }
-   
- 
- 
-   
 }
