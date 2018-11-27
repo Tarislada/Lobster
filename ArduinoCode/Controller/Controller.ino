@@ -1,7 +1,7 @@
 /* 
   Original file from KSW
   File name : block_trial_controller_v14_pump_trialMix_3s6sattack_suc6_tone.ino
-  Editted by JJH, 2018=11-12
+  Editted by JJH, 2018=11-27
 
   Arduino Script for the Lobster Controller
 */
@@ -18,8 +18,10 @@ const int PIN_LICK_INPUT = 10;
 const int PIN_ATTK_OUTPUT = 5;
 const int PIN_PUMP_OUTPUT = 4;
 
+const int PIN_TONE_OUTPUT = 8;
 
-bool isBlockSwitchOn = 0;
+// Event state boolean variables
+bool isBlockSwitchOn = false;
 bool isBlock = false;
 
 bool isDoorClosed = true;
@@ -28,10 +30,7 @@ bool isTrial = false;
 bool isAttackArmed = false;
 bool isAttacked = false;
 
-int tonekey = 8; //tone key
-
-int trcount = 0;
-
+// Time variable
 unsigned long blockOnSetTime = 0;
 unsigned long trialOnSetTime = 0;
 unsigned long attackOnSetTime = 0;
@@ -40,9 +39,9 @@ unsigned long AT;
 unsigned long maxLickTime = 6000; //max sucrose time 6000
 unsigned long lickOffSetTime = 0;
 
-int prob; 
+// Etc.
 int sa = 70; //six second attack probability
-
+int trcount = 1;
 
 void setup() 
 {
@@ -50,6 +49,7 @@ void setup()
   pinMode(PIN_BLOCK_INPUT, INPUT);
   pinMode(PIN_BLOCK_OUTPUT, OUTPUT);
   digitalWrite(PIN_BLOCK_OUTPUT,LOW);
+
   // Trial Sensor & LED
   pinMode(PIN_DOOR_INPUT, INPUT); //because its a magnetic switch, 0 is on
   pinMode(PIN_TRIAL_OUTPUT, OUTPUT);
@@ -108,8 +108,7 @@ void loop()
     {
       trialOnSetTime = millis(); 
       digitalWrite(PIN_TRIAL_OUTPUT,HIGH);
-
-      tone(8,1000,1000);
+      tone(PIN_TONE_OUTPUT,1000,1000);
 
       if(random(100) < sa)   //decide long or short attack onset time
         AT = 6000;
@@ -133,6 +132,10 @@ void loop()
           isAttackArmed = true;
           attackOnSetTime = millis() + AT;
           lickOffSetTime = millis() + maxLickTime;
+
+          Serial.print("Licked. Attack in ");
+          Serial.print(AT);
+          Serial.println("ms sec");
         }
       }
       else // armed
@@ -142,8 +145,7 @@ void loop()
           digitalWrite(PIN_ATTK_OUTPUT,HIGH);
           delay(100);
           digitalWrite(PIN_ATTK_OUTPUT,LOW);
-          Serial.print("attack at ");
-          Serial.println(AT);
+          Serial.print("Attacked!!");
           isAttacked = true;
         }
       }
@@ -156,6 +158,11 @@ void loop()
       isTrial = false;
       isAttackArmed = false;
       isAttacked = false;
+
+      // Pump out
+      digitalWrite(PIN_PUMP_OUTPUT,HIGH);
+      delay(3000);
+      digitalWrite(PIN_PUMP_OUTPUT,LOW);
     }
   }
 }
