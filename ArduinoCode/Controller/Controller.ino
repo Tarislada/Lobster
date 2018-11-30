@@ -1,7 +1,7 @@
 /* 
   Original file from KSW
   File name : block_trial_controller_v14_pump_trialMix_3s6sattack_suc6_tone.ino
-  Editted by JJH, 2018=11-27
+  Editted by JJH, 2018-11-27
 
   Arduino Script for the Lobster Controller
 */
@@ -19,6 +19,9 @@ const int PIN_ATTK_OUTPUT = 5;
 const int PIN_PUMP_OUTPUT = 4;
 
 const int PIN_TONE_OUTPUT = 8;
+
+const int PIN_MANUAL_SUC_INPUT = 11; // Suc button (previously "event button")
+const int PIN_MANUAL_SUC_OUTPUT = 12;
 
 // Event state boolean variables
 bool isBlockSwitchOn = false;
@@ -59,6 +62,9 @@ void setup()
   pinMode(PIN_ATTK_OUTPUT, OUTPUT);
   pinMode(PIN_PUMP_OUTPUT, OUTPUT);
 
+  pinMode(PIN_MANUAL_SUC_INPUT, INPUT);
+  pinMode(PIN_MANUAL_SUC_OUTPUT, OUTPUT);
+
   // generate random seed
   randomSeed(analogRead(0));
 
@@ -89,7 +95,7 @@ void loop()
   }
   else // in block
   {
-    if(isBlockSwitchOn == LOW && blockOnSetTime > millis()+500/* + 500 for jittering*/) // block digital switch off
+    if(isBlockSwitchOn == LOW && blockOnSetTime + 500 < millis()/* + 500 for jittering*/) // block digital switch off
     {
       digitalWrite(PIN_BLOCK_OUTPUT,LOW);
       Serial.println("Block ended");
@@ -145,7 +151,7 @@ void loop()
           digitalWrite(PIN_ATTK_OUTPUT,HIGH);
           delay(100);
           digitalWrite(PIN_ATTK_OUTPUT,LOW);
-          Serial.print("Attacked!!");
+          Serial.println("Attacked!!");
           isAttacked = true;
         }
       }
@@ -159,10 +165,23 @@ void loop()
       isAttackArmed = false;
       isAttacked = false;
 
+      digitalWrite(PIN_TRIAL_OUTPUT,LOW);
+      
       // Pump out
       digitalWrite(PIN_PUMP_OUTPUT,HIGH);
       delay(3000);
       digitalWrite(PIN_PUMP_OUTPUT,LOW);
     }
+  }
+  /*********************/
+  /****Manual Sucrose***/
+  /*********************/
+  if(digitalRead(PIN_MANUAL_SUC_INPUT) == HIGH)
+  {
+    digitalWrite(PIN_MANUAL_SUC_OUTPUT,HIGH);
+  }
+  else
+  {
+    digitalWrite(PIN_MANUAL_SUC_OUTPUT,LOW);
   }
 }
