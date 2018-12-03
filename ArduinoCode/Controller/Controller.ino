@@ -176,12 +176,5 @@ void loop()
   /*********************/
   /****Manual Sucrose***/
   /*********************/
-  if(digitalRead(PIN_MANUAL_SUC_INPUT) == HIGH)
-  {
-    digitalWrite(PIN_MANUAL_SUC_OUTPUT,HIGH);
-  }
-  else
-  {
-    digitalWrite(PIN_MANUAL_SUC_OUTPUT,LOW);
-  }
+  digitalWrite(PIN_MANUAL_SUC_OUTPUT,digitalRead(PIN_MANUAL_SUC_INPUT));
 }

@@ -1,75 +1,66 @@
-int test_pin = 7;
-int valve = 2;
-int LickPin = 12;
-int Lick_TDT = 11;
-int Lick_trial_key = 3;
+const int PIN_TEST_INPUT = 7;
+const int PIN_VALVE_OUTPUT = 2;
+const int PIN_LICKPIN_INPUT = 12;
+const int PIN_LICK_TDT_OUTPUT = 11;
+const int PIN_LICK_TRIAL_KEY_OUTPUT = 3;
+const int PIN_VALVE_INHIBIT_INPUT = 5;
+const int PIN_MANUAL_LICK_INPUT = 10;
 
 
 bool Lick_trial = false;
-
-bool lick_state = true;  // true false reversed! because of sensor specification
-
-bool test_state = false;
+bool isLickIRBlocked = true;
+bool isManualButtonPushed = false;
+bool isValveInhibited = false;
 
 unsigned long currentT = 0;
 unsigned long maxlick = 6000;
 unsigned long flick = 0;
 unsigned long suppress = 3000;
 
-int valve_inhibit = 0;
-int valv_i = 5; //valve inhibit key
-
 void setup() 
-{
-  // put your setup code here, to run once:
-  
-  pinMode(test_pin, INPUT);
-  pinMode(valve, OUTPUT);
-  pinMode(LickPin, INPUT);
-  pinMode(Lick_TDT, OUTPUT); 
-  pinMode(Lick_trial_key, OUTPUT);
-  pinMode(valv_i, INPUT); 
-
+{ 
+  pinMode(PIN_TEST_INPUT, INPUT);
+  pinMode(PIN_VALVE_OUTPUT, OUTPUT);
+  pinMode(PIN_LICKPIN_INPUT, INPUT);
+  pinMode(PIN_LICK_TDT_OUTPUT, OUTPUT); 
+  pinMode(PIN_LICK_TRIAL_KEY_OUTPUT, OUTPUT);
+  pinMode(PIN_VALVE_INHIBIT_INPUT, INPUT);
+  pinMode(PIN_MANUAL_LICK_INPUT, INPUT); 
 }
-
 
 
 void loop() 
 {
-  // put your main code here, to run repeatedly:
   currentT = millis();
 
-  lick_state = digitalRead(LickPin);
-  test_state = digitalRead(test_pin);
-  valve_inhibit = digitalRead(valv_i);
+  isLickIRBlocked = !digitalRead(PIN_LICKPIN_INPUT);
+  isManualButtonPushed = digitalRead(PIN_TEST_INPUT);
+  isValveInhibited = digitalRead(PIN_VALVE_INHIBIT_INPUT);
 
 
-  if (lick_state == false)
+  if (isLickIRBlocked) // sensor blocked = licking
   { 
-    digitalWrite(Lick_TDT, HIGH);
+    digitalWrite(PIN_LICK_TDT_OUTPUT, HIGH);
     
-    if(valve_inhibit == 0)
+    if(!isValveInhibited)
     {
-      digitalWrite(valve, HIGH);
+      digitalWrite(PIN_VALVE_OUTPUT, HIGH);
     }
-    digitalWrite(Lick_trial_key,HIGH);
+    digitalWrite(PIN_LICK_TRIAL_KEY_OUTPUT,HIGH);
   }
-
-  if (lick_state == true)
+  else // sensor not blocked = not licking
   { 
-    digitalWrite(Lick_TDT, LOW);
-    digitalWrite(valve, LOW);
-    digitalWrite(Lick_trial_key,LOW);
+    digitalWrite(PIN_LICK_TDT_OUTPUT, LOW);
+    digitalWrite(PIN_LICK_TRIAL_KEY_OUTPUT, LOW);
+    digitalWrite(PIN_VALVE_OUTPUT, LOW);
 
-
-    if (test_state == true)
+    if (isManualButtonPushed || digitalRead(PIN_MANUAL_LICK_INPUT))
     { 
-      digitalWrite(valve, HIGH);
+      digitalWrite(PIN_VALVE_OUTPUT, HIGH);
     }
-
-    if (test_state == false)
+    else
     { 
-      digitalWrite(valve, LOW);
+      digitalWrite(PIN_VALVE_OUTPUT, LOW);
     }
   }
 }
