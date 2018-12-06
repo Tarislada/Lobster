@@ -1,11 +1,11 @@
-const int PIN_TEST_INPUT = 7;
 const int PIN_VALVE_OUTPUT = 2;
-const int PIN_LICKPIN_INPUT = 12;
-const int PIN_LICK_TDT_OUTPUT = 11;
 const int PIN_LICK_TRIAL_KEY_OUTPUT = 3;
-const int PIN_VALVE_INHIBIT_INPUT = 5;
-const int PIN_MANUAL_LICK_INPUT = 10;
+const int PIN_LICK_TDT_OUTPUT = 4;
 
+const int PIN_VALVE_INHIBIT_INPUT = 8;
+const int PIN_MANUAL_LICK_INPUT = 9;
+const int PIN_TEST_INPUT = 10;
+const int PIN_LICKPIN_INPUT = 11;
 
 bool Lick_trial = false;
 bool isLickIRBlocked = true;
