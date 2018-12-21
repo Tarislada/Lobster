@@ -1,6 +1,6 @@
-const int PIN_VALVE_OUTPUT = 2;
-const int PIN_LICK_TRIAL_KEY_OUTPUT = 3;
-const int PIN_LICK_TDT_OUTPUT = 4;
+const int PIN_VALVE_OUTPUT = 5;
+const int PIN_LICK_TRIAL_KEY_OUTPUT = 6;
+const int PIN_LICK_TDT_OUTPUT = 7;
 
 const int PIN_VALVE_INHIBIT_INPUT = 8;
 const int PIN_MANUAL_LICK_INPUT = 9;
