@@ -26,6 +26,7 @@ void setup()
   pinMode(PIN_LICK_TRIAL_KEY_OUTPUT, OUTPUT);
   pinMode(PIN_VALVE_INHIBIT_INPUT, INPUT);
   pinMode(PIN_MANUAL_LICK_INPUT, INPUT); 
+  pinMode(13,OUTPUT);
 }
 
 
@@ -45,6 +46,12 @@ void loop()
     if(!isValveInhibited)
     {
       digitalWrite(PIN_VALVE_OUTPUT, HIGH);
+      digitalWrite(13,HIGH);
+    }
+    else
+    {
+    	digitalWrite(PIN_VALVE_OUTPUT,LOW);
+    	digitalWrite(13,LOW);
     }
     digitalWrite(PIN_LICK_TRIAL_KEY_OUTPUT,HIGH);
   }
@@ -57,10 +64,12 @@ void loop()
     if (isManualButtonPushed || digitalRead(PIN_MANUAL_LICK_INPUT))
     { 
       digitalWrite(PIN_VALVE_OUTPUT, HIGH);
+      digitalWrite(13,HIGH);
     }
     else
     { 
       digitalWrite(PIN_VALVE_OUTPUT, LOW);
+      digitalWrite(13,LOW);
     }
   }
 }
