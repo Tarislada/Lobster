@@ -1,3 +1,6 @@
+%% depricated
+
+
 %% aligned mat 파일 여러개를 한꺼번에 읽어서 PCA를 돌리는 스크립트
 % Imlazy_createmat.m 이나 Imlazy_trial_by_trial.m 에서 생성하는 *aligned.mat 데이터가
 % 필요.
