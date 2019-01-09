@@ -179,10 +179,9 @@ for trialtype = TYPE
         if exist(strcat(pathname,'aligned_new_',trialtype),'dir') == 0 % aligned 폴더가 존재하지 않으면
             mkdir(strcat(pathname,'aligned_new_',trialtype)); % 만들어줌
         end
-        % find subject name of the file
-        sname = regexp(filename{f}, 'GR\d(\d)?-','match');
         % parse filename
-        filename_date = filename{f}(strfind(filename{f},sname)+6:strfind(filename{f},sname)+9);
+        filename_date = regexp(filename{f}, '\d\d\d\d\d\d','match');
+        filename_date = filename_date{3}(3:end);
         temp1 = strfind(filename{f},'_');
         temp2 = strfind(filename{f},'.mat');
         filename_cellnum = filename{f}(temp1(end)+1:temp2-1);
