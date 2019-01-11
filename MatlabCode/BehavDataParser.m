@@ -75,7 +75,7 @@ for i = 1:numel(PAIR)
     end
     j = find(DATAPAIR == PAIR(i));
     if size(RAWDATA{j(1)},1) ~= size(RAWDATA{j(2)},1)
-        error('Error.\n%s와 연관된 다른 변수의 크기가 다릅니다.\n데이터 누락의 가능성이 있습니다.\n',DATALIST{DATAPAIR==j(1)});
+        error('Error.\n%s와 연관된 다른 변수의 크기가 다릅니다.\n데이터 누락의 가능성이 있습니다.\n',DATALIST{j(1)});
     end
 end
         
