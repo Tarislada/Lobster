@@ -34,13 +34,14 @@ for i = 1 : numel(DATALIST) % 이 한줄로된 파일명에 DATALIST에 해당하는 문자가 전
 end
 
 if sum(datafound) ~= numel(DATALIST) % 파일이 하나라도 없는 경우
+    fprintf('%s 경로에\n',location);
     temp = 1:numel(DATALIST);
     nodataindex = temp(not(datafound));
-    nodatalist = [];
     for i = nodataindex % 없는 놈을 찾아서 error 메시지 생성
-        nodatalist = [nodatalist,DATALIST{i},'\n'];
+        fprintf('%s\n',DATALIST{i});
     end
-    error(strcat('Error.\n%s\n위 경로에 아래의 csv 파일이 있지 않습니다.\n',location,nodatalist),'');
+    fprintf('파일이 누락\n');
+    error('csv 파일 누락!','');
 end
 fprintf('행동 데이터 확인 완료\n');
 clearvars i j datafound squeezedFilelist temp nodataindex nodatalist location
