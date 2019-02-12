@@ -24,7 +24,7 @@ filelist = ls(location);
 datafound = zeros(1,numel(DATALIST)); 
 filename = cell(numel(DATALIST),1);
 for i = 1 : numel(DATALIST) % 이 한줄로된 파일명에 DATALIST에 해당하는 문자가 전부 있는지 확인 
-    for j = 1 : numel(filelist)
+    for j = 1 : size(filelist,1)
         if contains(filelist(j,:),DATALIST{i})
             datafound(i) = 1;
             filename{i} = filelist(j,:);
