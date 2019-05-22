@@ -7,6 +7,9 @@ const int PIN_MANUAL_LICK_INPUT = 9;
 const int PIN_TEST_INPUT = 10;
 const int PIN_LICKPIN_INPUT = 11;
 
+const int PIN_POWER_ON_OUTPUT = 12;
+const int PIN_VALVE_ON_OUTPUT = 13;
+
 bool Lick_trial = false;
 bool isLickIRBlocked = true;
 bool isManualButtonPushed = false;
@@ -26,7 +29,10 @@ void setup()
   pinMode(PIN_LICK_TRIAL_KEY_OUTPUT, OUTPUT);
   pinMode(PIN_VALVE_INHIBIT_INPUT, INPUT);
   pinMode(PIN_MANUAL_LICK_INPUT, INPUT); 
-  pinMode(13,OUTPUT);
+  pinMode(PIN_POWER_ON_OUTPUT, OUTPUT);
+  pinMode(PIN_VALVE_ON_OUTPUT,OUTPUT);
+
+  digitalWrite(PIN_POWER_ON_OUTPUT, HIGH);
 }
 
 
@@ -46,12 +52,12 @@ void loop()
     if(!isValveInhibited)
     {
       digitalWrite(PIN_VALVE_OUTPUT, HIGH);
-      digitalWrite(13,HIGH);
+      digitalWrite(PIN_VALVE_ON_OUTPUT,HIGH);
     }
     else
     {
     	digitalWrite(PIN_VALVE_OUTPUT,LOW);
-    	digitalWrite(13,LOW);
+    	digitalWrite(PIN_VALVE_ON_OUTPUT,LOW);
     }
     digitalWrite(PIN_LICK_TRIAL_KEY_OUTPUT,HIGH);
   }
@@ -64,12 +70,12 @@ void loop()
     if (isManualButtonPushed || digitalRead(PIN_MANUAL_LICK_INPUT))
     { 
       digitalWrite(PIN_VALVE_OUTPUT, HIGH);
-      digitalWrite(13,HIGH);
+      digitalWrite(PIN_VALVE_ON_OUTPUT,HIGH);
     }
     else
     { 
       digitalWrite(PIN_VALVE_OUTPUT, LOW);
-      digitalWrite(13,LOW);
+      digitalWrite(PIN_VALVE_ON_OUTPUT,LOW);
     }
   }
 }
