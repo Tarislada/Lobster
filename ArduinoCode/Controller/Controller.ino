@@ -21,6 +21,7 @@ const int PIN_MANUAL_SUC_INPUT = 11;
 const int PIN_MANUAL_SUC_OUTPUT = 9;
 
 const int PIN_ATTKMODE_INPUT = 12; // Only Attacks when On
+const int PIN_PUMP_INPUT = 13;
 
 // Event state boolean variables
 bool isBlockSwitchOn = false;
@@ -183,4 +184,9 @@ void loop()
   /****Manual Sucrose***/
   /*********************/
   digitalWrite(PIN_MANUAL_SUC_OUTPUT,digitalRead(PIN_MANUAL_SUC_INPUT));
+
+  /*********************/
+  /*****Manual PUMP*****/
+  /*********************/
+  digitalWrite(PIN_PUMP_OUTPUT,digitalRead(PIN_PUMP_INPUT));
 }
