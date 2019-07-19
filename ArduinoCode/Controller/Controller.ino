@@ -1,8 +1,5 @@
 /* 
-  Original file from KSW
-  File name : block_trial_controller_v14_pump_trialMix_3s6sattack_suc6_tone.ino
-  Editted by JJH, 2018-11-27
-
+  Created by Knowblesse, 2018-11-27
   Arduino Script for the Lobster Controller
 */
 
@@ -20,8 +17,10 @@ const int PIN_PUMP_OUTPUT = 4;
 
 const int PIN_TONE_OUTPUT = 8;
 
-const int PIN_MANUAL_SUC_INPUT = 11; // Suc button (previously "event button")
-const int PIN_MANUAL_SUC_OUTPUT = 12;
+const int PIN_MANUAL_SUC_INPUT = 11;
+const int PIN_MANUAL_SUC_OUTPUT = 9;
+
+const int PIN_ATTKMODE_INPUT = 12; // Only Attacks when On
 
 // Event state boolean variables
 bool isBlockSwitchOn = false;
@@ -70,10 +69,18 @@ void setup()
 
   Serial.begin(9600);
   Serial.println("==========Current Protocol===========");
-  Serial.print("Attack in 6sec : ");
-  Serial.println(sa);
-  Serial.print("Attack in 3sec : ");
-  Serial.println(100-sa);
+  
+  if(digitalRead(PIN_ATTKMODE_INPUT) == LOW)
+  {
+    Serial.println("No Attack");
+  }
+  else
+  {
+    Serial.print("Attack in 6sec : ");
+    Serial.println(sa);
+    Serial.print("Attack in 3sec : ");
+    Serial.println(100-sa);
+  }
   Serial.println("=====================================");
 }
 
@@ -114,7 +121,6 @@ void loop()
     {
       trialOnSetTime = millis(); 
       digitalWrite(PIN_TRIAL_OUTPUT,HIGH);
-      tone(PIN_TONE_OUTPUT,1000,1000);
 
       if(random(100) < sa)   //decide long or short attack onset time
         AT = 6000;
@@ -146,7 +152,7 @@ void loop()
       }
       else // armed
       {
-        if(attackOnSetTime < millis()) // Attack Onset Time reached
+        if(attackOnSetTime < millis() && digitalRead(PIN_ATTKMODE_INPUT) == HIGH) // Attack Onset Time reached
         {
           digitalWrite(PIN_ATTK_OUTPUT,HIGH);
           delay(100);
