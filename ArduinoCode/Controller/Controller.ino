@@ -3,6 +3,9 @@
   Arduino Script for the Lobster Controller
 */
 
+
+// Pump와 Trial 파트 간에 혼선이 있음.
+
 // Assign Pin Numbers
 const int PIN_BLOCK_INPUT = 2;
 const int PIN_BLOCK_OUTPUT = 3;
@@ -45,6 +48,8 @@ unsigned long lickOffSetTime = 0;
 // Etc.
 int sa = 70; //six second attack probability
 int trcount = 1;
+int numLick = 0;
+bool lickToggle = false;
 
 void setup() 
 {
@@ -189,4 +194,24 @@ void loop()
   /*****Manual PUMP*****/
   /*********************/
   digitalWrite(PIN_PUMP_OUTPUT,digitalRead(PIN_PUMP_INPUT));
+  
+  //num Lick Count
+  if(digitalRead(PIN_LICK_INPUT)==HIGH)
+  {
+    if(!lickToggle)
+    {
+      lickToggle = true;
+      numLick++;
+      if(numLick%10 == 0){
+        Serial.println(numLick);
+      }
+    }
+  }
+  else
+  {
+    if(lickToggle)
+    {
+      lickToggle = false;
+    }
+  }
 }
