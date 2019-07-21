@@ -23,8 +23,8 @@ const int PIN_TONE_OUTPUT = 8;
 const int PIN_MANUAL_SUC_INPUT = 11;
 const int PIN_MANUAL_SUC_OUTPUT = 9;
 
-const int PIN_ATTKMODE_INPUT = 12; // Only Attacks when On
-const int PIN_PUMP_INPUT = 13;
+const int PIN_ATTKMODE_INPUT = 13; // Only Attacks when On
+const int PIN_PUMP_INPUT = 12;
 
 // Event state boolean variables
 bool isBlockSwitchOn = false;
@@ -179,10 +179,10 @@ void loop()
 
       digitalWrite(PIN_TRIAL_OUTPUT,LOW);
       
-      // Pump out
-      digitalWrite(PIN_PUMP_OUTPUT,HIGH);
-      delay(3000);
-      digitalWrite(PIN_PUMP_OUTPUT,LOW);
+      // // Pump out
+      // digitalWrite(PIN_PUMP_OUTPUT,HIGH);
+      // delay(3000);
+      // digitalWrite(PIN_PUMP_OUTPUT,LOW);
     }
   }
   /*********************/
