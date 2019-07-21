@@ -179,10 +179,10 @@ void loop()
 
       digitalWrite(PIN_TRIAL_OUTPUT,LOW);
       
-      // Pump out
-      digitalWrite(PIN_PUMP_OUTPUT,HIGH);
-      delay(3000);
-      digitalWrite(PIN_PUMP_OUTPUT,LOW);
+      // // Pump out
+      // digitalWrite(PIN_PUMP_OUTPUT,HIGH);
+      // delay(3000);
+      // digitalWrite(PIN_PUMP_OUTPUT,LOW);
     }
   }
   /*********************/
