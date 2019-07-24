@@ -4,8 +4,6 @@
 */
 
 
-// Pump와 Trial 파트 간에 혼선이 있음.
-
 // Assign Pin Numbers
 const int PIN_BLOCK_INPUT = 2;
 const int PIN_BLOCK_OUTPUT = 3;
@@ -23,8 +21,8 @@ const int PIN_TONE_OUTPUT = 8;
 const int PIN_MANUAL_SUC_INPUT = 11;
 const int PIN_MANUAL_SUC_OUTPUT = 9;
 
-const int PIN_ATTKMODE_INPUT = 13; // Only Attacks when On
-const int PIN_PUMP_INPUT = 12;
+const int PIN_CLEANUP = 12; // when on, pump and valve is on
+const int PIN_PUMP_INPUT = 13;
 
 // Event state boolean variables
 bool isBlockSwitchOn = false;
@@ -44,6 +42,8 @@ unsigned long AT;
 
 unsigned long maxLickTime = 6000; //max sucrose time 6000
 unsigned long lickOffSetTime = 0;
+
+unsigned long starttime;
 
 // Etc.
 int sa = 70; //six second attack probability
@@ -69,25 +69,19 @@ void setup()
 
   pinMode(PIN_MANUAL_SUC_INPUT, INPUT);
   pinMode(PIN_MANUAL_SUC_OUTPUT, OUTPUT);
+  pinMode(PIN_CLEANUP, INPUT);
 
   // generate random seed
   randomSeed(analogRead(0));
 
   Serial.begin(9600);
   Serial.println("==========Current Protocol===========");
-  
-  if(digitalRead(PIN_ATTKMODE_INPUT) == LOW)
-  {
-    Serial.println("No Attack");
-  }
-  else
-  {
-    Serial.print("Attack in 6sec : ");
-    Serial.println(sa);
-    Serial.print("Attack in 3sec : ");
-    Serial.println(100-sa);
-  }
+  Serial.print("Attack in 6sec : ");
+  Serial.println(sa);
+  Serial.print("Attack in 3sec : ");
+  Serial.println(100-sa);
   Serial.println("=====================================");
+  starttime = millis();
 }
 
 void loop() 
@@ -179,32 +173,40 @@ void loop()
 
       digitalWrite(PIN_TRIAL_OUTPUT,LOW);
       
-      // // Pump out
-      // digitalWrite(PIN_PUMP_OUTPUT,HIGH);
-      // delay(3000);
-      // digitalWrite(PIN_PUMP_OUTPUT,LOW);
     }
   }
-  /*********************/
-  /****Manual Sucrose***/
-  /*********************/
-  digitalWrite(PIN_MANUAL_SUC_OUTPUT,digitalRead(PIN_MANUAL_SUC_INPUT));
 
-  /*********************/
-  /*****Manual PUMP*****/
-  /*********************/
-  digitalWrite(PIN_PUMP_OUTPUT,digitalRead(PIN_PUMP_INPUT));
+  // Manual Scrose and Pump
+  if (digitalRead(PIN_CLEANUP) == HIGH){ // clean up mode
+    digitalWrite(PIN_MANUAL_SUC_OUTPUT, HIGH);
+    digitalWrite(PIN_PUMP_OUTPUT, HIGH);
+  }
+  else
+  {
+    digitalWrite(PIN_MANUAL_SUC_OUTPUT,digitalRead(PIN_MANUAL_SUC_INPUT));
+    digitalWrite(PIN_PUMP_OUTPUT,digitalRead(PIN_PUMP_INPUT));
+  }
   
-  //num Lick Count
+  //Num Lick Count
   if(digitalRead(PIN_LICK_INPUT)==HIGH)
   {
     if(!lickToggle)
     {
       lickToggle = true;
       numLick++;
-      if(numLick%10 == 0){
+      if(numLick%10 == 0)
+      {
+        if(numLick%100 == 0)
+        { 
+          unsigned long timepassed = millis() - starttime;
+          Serial.print(long(timepassed / 1000 / 60));
+          Serial.print(":");
+          Serial.println((timepassed - long(timepassed / 1000 / 60) * 1000 * 60)/1000);
+        }
         Serial.println(numLick);
       }
+
+
     }
   }
   else
