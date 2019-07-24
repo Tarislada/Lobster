@@ -152,7 +152,7 @@ void loop()
       }
       else // armed
       {
-        if(attackOnSetTime < millis() && digitalRead(PIN_ATTKMODE_INPUT) == HIGH) // Attack Onset Time reached
+        if(attackOnSetTime < millis()) // Attack Onset Time reached
         {
           digitalWrite(PIN_ATTK_OUTPUT,HIGH);
           delay(100);
