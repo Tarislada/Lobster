@@ -34,6 +34,8 @@ bool isTrial = false;
 bool isAttackArmed = false;
 bool isAttacked = false;
 
+bool isBlockEverStarted = false;
+
 // Time variable
 unsigned long blockOnSetTime = 0;
 unsigned long trialOnSetTime = 0;
@@ -42,8 +44,6 @@ unsigned long AT;
 
 unsigned long maxLickTime = 6000; //max sucrose time 6000
 unsigned long lickOffSetTime = 0;
-
-unsigned long starttime;
 
 // Etc.
 int sa = 70; //six second attack probability
@@ -81,7 +81,6 @@ void setup()
   Serial.print("Attack in 3sec : ");
   Serial.println(100-sa);
   Serial.println("=====================================");
-  starttime = millis();
 }
 
 void loop() 
@@ -96,6 +95,7 @@ void loop()
     {
       digitalWrite(PIN_BLOCK_OUTPUT,HIGH);
       Serial.println("Block started");
+      isBlockEverStarted = true;
       blockOnSetTime = millis();
       isBlock = true;
     }
@@ -106,6 +106,15 @@ void loop()
     {
       digitalWrite(PIN_BLOCK_OUTPUT,LOW);
       Serial.println("Block ended");
+      if (isBlockEverStarted)
+      {
+        Serial.println("##########Experiment Finished##########");
+        Serial.print("Number of Total Trials : ");
+        Serial.println(trcount);
+        Serial.print("Number of Total Licks : ");
+        Serial.println(numLick);
+        Serial.println("#######################################");
+      }
       trcount = 1;
       isBlock = false;
     }
@@ -157,7 +166,7 @@ void loop()
           digitalWrite(PIN_ATTK_OUTPUT,HIGH);
           delay(100);
           digitalWrite(PIN_ATTK_OUTPUT,LOW);
-          Serial.println("Attacked!!");
+          Serial.println("##########Attacked!!##########");
           isAttacked = true;
         }
       }
@@ -198,7 +207,7 @@ void loop()
       {
         if(numLick%100 == 0)
         { 
-          unsigned long timepassed = millis() - starttime;
+          unsigned long timepassed = millis() - blockOnSetTime;
           Serial.print(long(timepassed / 1000 / 60));
           Serial.print(":");
           Serial.println((timepassed - long(timepassed / 1000 / 60) * 1000 * 60)/1000);
