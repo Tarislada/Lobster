@@ -2,9 +2,8 @@ const int PIN_VALVE_OUTPUT = 5;
 const int PIN_LICK_TRIAL_KEY_OUTPUT = 6;
 const int PIN_LICK_TDT_OUTPUT = 7;
 
-const int PIN_CONTROL_LICK_INPUT = 8; // previously Valve Inhibit
-const int PIN_MANUAL_LICK_INPUT = 9;
-const int PIN_TEST_INPUT = 10;
+const int PIN_CONTROL_LICK_INPUT = 8; // previously Valve Inhibit. Manual Button at Control panel
+const int PIN_MANUAL_LICK_INPUT = 9; // 
 const int PIN_LICKPIN_INPUT = 11;
 
 const int PIN_POWER_ON_OUTPUT = 12;
@@ -21,7 +20,6 @@ unsigned long suppress = 3000;
 
 void setup() 
 { 
-  pinMode(PIN_TEST_INPUT, INPUT);
   pinMode(PIN_VALVE_OUTPUT, OUTPUT);
   pinMode(PIN_LICKPIN_INPUT, INPUT);
   pinMode(PIN_LICK_TDT_OUTPUT, OUTPUT); 
@@ -40,7 +38,7 @@ void loop()
   currentT = millis();
 
   isLickIRBlocked = !digitalRead(PIN_LICKPIN_INPUT);
-  isManualButtonPushed = digitalRead(PIN_TEST_INPUT) || digitalRead(PIN_CONTROL_LICK_INPUT);
+  isManualButtonPushed = digitalRead(PIN_CONTROL_LICK_INPUT);
 
 
   if (isLickIRBlocked) // sensor blocked = licking
