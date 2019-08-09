@@ -1,5 +1,6 @@
 #include <Servo.h> 
- 
+
+const int PIN_ATTACK_IN_MANUAL = 8; 
 const int PIN_ATTACK_IN = 9;
 const int PIN_ATTACK_OUT = 10;
 
@@ -13,6 +14,7 @@ Servo myservo2;
 
 void setup() 
 {
+  Serial.begin(9600);
   pinMode(PIN_ATTACK_IN, INPUT);
   pinMode(PIN_ATTACK_OUT, OUTPUT);
   pinMode(PIN_SERVO_ON, OUTPUT);
@@ -26,18 +28,19 @@ void setup()
   digitalWrite(PIN_SERVO_ON, HIGH);
   myservo1.write(60);
   myservo2.write(145);
-  delay(100);
+  delay(200);
   digitalWrite(PIN_SERVO_ON, LOW);
 } 
  
 void loop() 
 {
-  if(digitalRead(PIN_ATTACK_IN) == HIGH) // Attack
+  if(digitalRead(PIN_ATTACK_IN) == HIGH || digitalRead(PIN_ATTACK_IN_MANUAL) == HIGH) // Attack
   {
     // Send Attack Info to TDT
     digitalWrite(PIN_ATTACK_OUT,HIGH);
 
     // Perform Attack
+    Serial.println("attack");
     attack();
 
     // Send Attack Info
@@ -51,16 +54,16 @@ void attack()
   delay(10);
   myservo1.write(90);               
   myservo2.write(115);
-  delay(170);
+  delay(250);
   myservo1.write(60);  
   myservo2.write(145);
-  delay(230);
+  delay(250);
   myservo1.write(90);               
   myservo2.write(115);
-  delay(170);
+  delay(250);
   myservo1.write(60);
   myservo2.write(145);
-  delay(230);
+  delay(250);
   digitalWrite(PIN_SERVO_ON, LOW);
 }
 
