@@ -26,6 +26,7 @@ void setup()
   myservo2.attach(PIN_SERVO2);
 
   digitalWrite(PIN_SERVO_ON, HIGH);
+  delay(50);
   myservo1.write(60);
   myservo2.write(145);
   delay(200);
@@ -51,19 +52,19 @@ void loop()
 void attack()
 {
   digitalWrite(PIN_SERVO_ON, HIGH);
-  delay(10);
-  myservo1.write(90);               
-  myservo2.write(115);
-  delay(250);
+  delay(50);
+  myservo1.write(100);               
+  myservo2.write(105);
+  delay(200);
   myservo1.write(60);  
   myservo2.write(145);
-  delay(250);
-  myservo1.write(90);               
-  myservo2.write(115);
-  delay(250);
+  delay(200);
+  myservo1.write(100);               
+  myservo2.write(105);
+  delay(200);
   myservo1.write(60);
   myservo2.write(145);
-  delay(250);
+  delay(200);
   digitalWrite(PIN_SERVO_ON, LOW);
 }
 
