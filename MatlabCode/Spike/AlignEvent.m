@@ -3,9 +3,9 @@
 % 특정 이벤트 시점 전후로 spike 데이터를 정렬한 후 zscore를 계산, aligned_new 폴더에 저장.
 
 %% PARAMETERS
-TIMEWINDOW_LEFT = -2; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
-TIMEWINDOW_RIGHT = +2; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
-TIMEWINDOW_BIN = 0.1; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
+TIMEWINDOW_LEFT = -1; % 이벤트를 기점으로 몇초 전 데이터까지 사용할지.
+TIMEWINDOW_RIGHT = +1; % 이벤트를 기점으로 몇포 후 데이터를 사용할지.
+TIMEWINDOW_BIN = 0.05; % TIMEWINDOW의 각각의 bin 크기는 얼마로 잡을지.
 
 %% Unit data 경로 선택
 if exist('targetfiles','var') == 0 % 미리 targetfiles를 정하지 않은 경우

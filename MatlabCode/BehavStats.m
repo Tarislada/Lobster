@@ -9,11 +9,9 @@ numIRClusters_ = [];
 numLickClusters_ = [];
 for f = 1 : NUM_FILES
     [ParsedData, Trials, IRs, Licks, Attacks ] = BehavDataParser();
-    AnalyticValueExtractor;
+    behaviorResult = AnalyticValueExtractor(ParsedData, false, false);
     ParsedData_ = [ParsedData_;ParsedData];
     behaviorResult_ = [behaviorResult_; behaviorResult];
-    numIRClusters_ = [numIRClusters_; numIRClusters];
-    numLickClusters_ = [numLickClusters_; numLickClusters];
 end
 
 ParsedData = ParsedData_;
@@ -69,8 +67,7 @@ StatArray(:,4) = InputArray(:,4) - InputArray(:,3);
 StatArray(:,5) = InputArray(:,3) - InputArray(:,1);
 StatArray(:,6) = InputArray(:,5) - InputArray(:,4);
 StatArray(:,7) = InputArray(:,5) - InputArray(:,2);
-StatArray(:,8) = numIRClusters;
-StatArray(:,9) = numLickClusters;
+
 StatArray(:,10) = InputArray(:,2) - InputArray(:,3);
 StatArray(:,11) = InputArray(:,6);
 %% Draw Figures
