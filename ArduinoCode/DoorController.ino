@@ -5,8 +5,6 @@ const int PIN_DOOR_STATE_INPUT = 4;
 const int PIN_TOGGLE_INPUT = 12;
 const int PIN_RESET_INPUT = 13;
 
-
-
 bool prevToggleState;
 bool currToggleState;
 
@@ -20,7 +18,7 @@ const int Duration = 800;
 void setup()
 {
 	pinMode(PIN_MOTOR_DIR_OUTPUT, OUTPUT);
-	pinMode(PIN_DOOR_STATE_INPUT, OUTPUT);
+	pinMode(PIN_MOTOR_CLK_OUTPUT, OUTPUT);
 	pinMode(PIN_DOOR_STATE_INPUT, INPUT);
 	pinMode(PIN_TOGGLE_INPUT, INPUT);
 	pinMode(PIN_RESET_INPUT, INPUT);
@@ -28,73 +26,78 @@ void setup()
 	// Check toggle state
 	prevToggleState = digitalRead(PIN_TOGGLE_INPUT);
 
-	// Init. condition
+	// Initialize
 	isDoorMoving = false;
 }
 
 void loop()
 {	
 
-	// reset button
-	if (PIN_RESET_INPUT == HIGH)
-	{
-		noTone(PIN_MOTOR_CLK_OUTPUT); // stops everything
-		isDoorMoving = false;
-		delay(5000);
-
-	}
-
-	//check toggle button change
 	currToggleState = digitalRead(PIN_TOGGLE_INPUT);
 	
-	if (isDoorMoving) // door moving
+	//################## DOOR MOVING ##################
+	if (isDoorMoving)
 	{
-		// door stoping criterion reached
-		if (currToggleState)
-		{
-			if (digitalRead(PIN_DOOR_STATE_INPUT) || millis() - doorStartTime > Duration + 200) // Down stop criterion : door contact + moving more than 1sec
-			{
-				noTone(PIN_MOTOR_CLK_OUTPUT);
-				isDoorMoving = false;
-			}
-		}
-		else
-		{
-			if (millis() - doorStartTime > Duration) // Up stop criterion
-			{
-				noTone(PIN_MOTOR_CLK_OUTPUT);
-				isDoorMoving = false;
-			}
-		}
-
-
-		// door direction change while moving
-		if (prevToggleState != currToggleState) // toggle button state changed
+		
+		if (prevToggleState != currToggleState) // door direction change while moving
 		{
 			prevToggleState = currToggleState;
 
 			doorStartTime = millis() + (Duration - doorStartTime) ;
 
 			// move motor
-			digitalWrite(PIN_MOTOR_DIR_OUTPUT, !currToggleState); //set DIR
+			digitalWrite(PIN_MOTOR_DIR_OUTPUT, currToggleState); //set DIR
 			tone(PIN_MOTOR_CLK_OUTPUT, Freq); // initiate motor
-		} 
-
-
+			isDoorMoving = true;
+		}
+		else // toggle button remain unchanged
+		{
+			// door stoping criterion reached
+			if (currToggleState)
+			{
+				//was going down
+				if (digitalRead(PIN_DOOR_STATE_INPUT) || millis() - doorStartTime > Duration + 200) // Down stop criterion : door contact + moving more than 1sec
+				{
+					noTone(PIN_MOTOR_CLK_OUTPUT);
+					isDoorMoving = false;
+				}
+			}
+			else
+			{
+				//was going up
+				if (millis() - doorStartTime > Duration) // Up stop criterion
+				{
+					noTone(PIN_MOTOR_CLK_OUTPUT);
+					isDoorMoving = false;
+				}
+			}			
+		}
 	}
-	else // door fixed
+	//################## DOOR FIXED ##################
+	else
 	{
 		if (prevToggleState != currToggleState) // toggle button state changed
 		{
 			prevToggleState = currToggleState;
 
-			isDoorMoving = true;
+			
 			doorStartTime = millis();
 
 			// move motor
-			digitalWrite(PIN_MOTOR_DIR_OUTPUT, !currToggleState); //set DIR
+			digitalWrite(PIN_MOTOR_DIR_OUTPUT, currToggleState); //set DIR
 			tone(PIN_MOTOR_CLK_OUTPUT, Freq); // initiate motor
+			isDoorMoving = true;
 		}
+	}
+
+
+	// Reset button
+	if (digitalRead(PIN_RESET_INPUT))
+	{
+		noTone(PIN_MOTOR_CLK_OUTPUT); // stops everything
+		isDoorMoving = false;
+		delay(3000);
+		prevToggleState = digitalRead(PIN_TOGGLE_INPUT); // prevent moving right after reset off
 	}
 
 }
