@@ -3,7 +3,7 @@ const int PIN_MOTOR_DIR_OUTPUT = 6;
 const int PIN_MOTOR_CLK_OUTPUT = 5;
 const int PIN_DOOR_STATE_INPUT = 4;
 
-const int PIN_OPENBUTTON_INPUT = 10;
+const int PIN_OPENBUTTON_INPUT = 9;
 const int PIN_CLOSESIG_INPUT = 11;
 const int PIN_TOGGLE_INPUT = 12;
 const int PIN_RESET_INPUT = 13;
@@ -113,7 +113,7 @@ void loop()
     }
     if (currControllerSignal == HIGH) // attack signal came. go down.
     {
-      delay(1200); // delay for attack signal
+      delay(1000); // delay for attack signal
       doorStartTime = millis();
       isDirectionUp = false;
       moveDoor(isDirectionUp);  
