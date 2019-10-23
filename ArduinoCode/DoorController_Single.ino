@@ -90,7 +90,6 @@ void loop()
         //was going down
         if (digitalRead(PIN_DOOR_STATE_INPUT) == HIGH) // Down stop criterion : door contact + moving more than 1sec
         {
-
           noTone(PIN_MOTOR_CLK_OUTPUT);
           isDoorMoving = false;
         }
@@ -114,6 +113,7 @@ void loop()
     }
     if (currControllerSignal == HIGH) // attack signal came. go down.
     {
+      delay(1200); // delay for attack signal
       doorStartTime = millis();
       isDirectionUp = false;
       moveDoor(isDirectionUp);  
