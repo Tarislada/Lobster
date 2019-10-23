@@ -3,7 +3,7 @@
   Arduino Script for the Lobster Controller
 */
 
-const String START_MSG = "Version 19OCT23"
+const String START_MSG = "Version 19OCT23";
 
 // Assign Pin Numbers
 const int PIN_BLOCK_INPUT = 2;
