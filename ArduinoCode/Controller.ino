@@ -3,6 +3,7 @@
   Arduino Script for the Lobster Controller
 */
 
+const String START_MSG = "Version 19OCT23"
 
 // Assign Pin Numbers
 const int PIN_BLOCK_INPUT = 2;
@@ -16,7 +17,7 @@ const int PIN_LICK_INPUT = 10;
 const int PIN_ATTK_OUTPUT = 5;
 const int PIN_PUMP_OUTPUT = 4;
 
-const int PIN_TONE_OUTPUT = 8;
+const int PIN_CLOSE_OUTPUT = 8;
 
 const int PIN_MANUAL_SUC_INPUT = 11;
 const int PIN_MANUAL_SUC_OUTPUT = 9;
@@ -71,10 +72,13 @@ void setup()
   pinMode(PIN_MANUAL_SUC_OUTPUT, OUTPUT);
   pinMode(PIN_CLEANUP, INPUT);
 
+  pinMode(PIN_CLOSE_OUTPUT, OUTPUT);
+
   // generate random seed
   randomSeed(analogRead(0));
 
   Serial.begin(9600);
+  Serial.println(START_MSG);
   Serial.println("==========Current Protocol===========");
   Serial.print("Attack in 6sec : ");
   Serial.println(sa);
@@ -164,8 +168,10 @@ void loop()
         if(attackOnSetTime < millis()) // Attack Onset Time reached
         {
           digitalWrite(PIN_ATTK_OUTPUT,HIGH);
+          digitalWrite(PIN_CLOSE_OUTPUT, HIGH); // this sig will command the door controller to close after 1 sec from this sig.
           delay(100);
           digitalWrite(PIN_ATTK_OUTPUT,LOW);
+          digitalWrite(PIN_CLOSE_OUTPUT, LOW);
           Serial.println("##########Attacked!!##########");
           isAttacked = true;
         }
