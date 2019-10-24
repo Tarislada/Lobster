@@ -25,6 +25,9 @@ const int PIN_MANUAL_SUC_OUTPUT = 9;
 const int PIN_CLEANUP = 12; // when on, pump and valve is on
 const int PIN_PUMP_INPUT = 13;
 
+int pin_manual_output;
+
+
 // Event state boolean variables
 bool isBlockSwitchOn = false;
 bool isBlock = false;
@@ -45,6 +48,9 @@ unsigned long AT;
 
 unsigned long maxLickTime = 6000; //max sucrose time 6000
 unsigned long lickOffSetTime = 0;
+
+unsigned long accumLickTime = 0; // accum licking time 
+unsigned long lickStartTime = 0;
 
 // Etc.
 int sa = 70; //six second attack probability
@@ -79,6 +85,37 @@ void setup()
 
   Serial.begin(9600);
   Serial.println(START_MSG);
+  Serial.println("==============Select Mode============");
+  Serial.println("Mode : at : attack | tr :train");
+  Serial.println("Mode? : ");
+  
+  String mode;
+  bool flag = true;
+  while (flag)
+  {
+    if (Serial.available())
+    {
+      mode = Serial.readString();
+      if (mode = "at")
+      {
+        pin_manual_output = PIN_ATTK_OUTPUT;
+        Serial.println("Attack Mode");
+        flag = false;
+      }
+      else if (mode = "tr")
+      {
+        pin_manual_output = PIN_MANUAL_SUC_OUTPUT;
+        Serial.println("Training Mode");
+        flag = false;
+      }
+      else
+      {
+        Serial.println("Wrong Input");
+        flag = true;
+      }
+    }
+  }
+
   Serial.println("==========Current Protocol===========");
   Serial.print("Attack in 6sec : ");
   Serial.println(sa);
@@ -102,6 +139,12 @@ void loop()
       isBlockEverStarted = true;
       blockOnSetTime = millis();
       isBlock = true;
+      
+      // Init. all variables
+      numLick = 0;
+      trcount = 1;
+      accumLickTime = 0;
+
     }
   }
   else // in block
@@ -117,9 +160,10 @@ void loop()
         Serial.println(trcount);
         Serial.print("Number of Total Licks : ");
         Serial.println(numLick);
+        Serial.print("Lick Time : ");
+        Serial.println(accumLickTime);
         Serial.println("#######################################");
       }
-      trcount = 1;
       isBlock = false;
     }
   }
@@ -198,7 +242,7 @@ void loop()
   }
   else
   {
-    digitalWrite(PIN_MANUAL_SUC_OUTPUT,digitalRead(PIN_MANUAL_SUC_INPUT));
+    digitalWrite(pin_manual_output,digitalRead(PIN_MANUAL_SUC_INPUT));
     digitalWrite(PIN_PUMP_OUTPUT,digitalRead(PIN_PUMP_INPUT));
   }
   
@@ -209,6 +253,9 @@ void loop()
     {
       lickToggle = true;
       numLick++;
+
+      lickStartTime = millis(); // add lick start time
+
       if(numLick%10 == 0)
       {
         if(numLick%100 == 0)
@@ -220,8 +267,6 @@ void loop()
         }
         Serial.println(numLick);
       }
-
-
     }
   }
   else
@@ -229,6 +274,7 @@ void loop()
     if(lickToggle)
     {
       lickToggle = false;
+      accumLickTime += millis() - lickStartTime;
     }
   }
 }
