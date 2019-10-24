@@ -58,6 +58,8 @@ int trcount = 1;
 int numLick = 0;
 bool lickToggle = false;
 
+String mode;
+
 void setup() 
 {
   // Block Switch & LED
@@ -89,7 +91,7 @@ void setup()
   Serial.println("Mode : at : attack | tr :train");
   Serial.println("Mode? : ");
   
-  String mode;
+  
   bool flag = true;
   while (flag)
   {
@@ -100,12 +102,14 @@ void setup()
       {
         pin_manual_output = PIN_ATTK_OUTPUT;
         Serial.println("Attack Mode");
+        digitalWrite(PIN_MANUAL_SUC_OUTPUT, LOW);
         flag = false;
       }
       else if (mode = "tr")
       {
         pin_manual_output = PIN_MANUAL_SUC_OUTPUT;
         Serial.println("Training Mode");
+        digitalWrite(PIN_ATTK_OUTPUT, LOW);
         flag = false;
       }
       else
@@ -242,7 +246,24 @@ void loop()
   }
   else
   {
-    digitalWrite(pin_manual_output,digitalRead(PIN_MANUAL_SUC_INPUT));
+  	if (mode == "at")
+  	{
+  		digitalWrite(PIN_MANUAL_SUC_OUTPUT, LOW);
+  		if(digitalRead(PIN_MANUAL_SUC_INPUT) == HIGH)
+  		{
+          digitalWrite(PIN_ATTK_OUTPUT,HIGH);
+          digitalWrite(PIN_CLOSE_OUTPUT, HIGH); // this sig will command the door controller to close after 1 sec from this sig.
+          delay(100);
+          digitalWrite(PIN_ATTK_OUTPUT,LOW);
+          digitalWrite(PIN_CLOSE_OUTPUT, LOW);
+          Serial.println("##########Attacked!!##########");
+          isAttacked = true;
+  		}
+  	}
+    else
+    {
+    	digitalWrite(PIN_MANUAL_SUC_OUTPUT, digitalRead(PIN_MANUAL_SUC_INPUT));
+    }
     digitalWrite(PIN_PUMP_OUTPUT,digitalRead(PIN_PUMP_INPUT));
   }
   
