@@ -3,32 +3,27 @@
   Arduino Script for the Lobster Controller
 */
 
-const String START_MSG = "Version 19OCT23";
+const String START_MSG =\
+"Lobsterbot Controller\n \
+Version 2.0\n \
+Knowblesse 2019";
 
 // Assign Pin Numbers
-const int PIN_BLOCK_INPUT = 2;
-const int PIN_BLOCK_OUTPUT = 3;
-
-const int PIN_DOOR_INPUT = 6;
-const int PIN_TRIAL_OUTPUT = 7;
-
-const int PIN_LICK_INPUT = 10;
-
-const int PIN_ATTK_OUTPUT = 5;
-const int PIN_PUMP_OUTPUT = 4;
-
-const int PIN_CLOSE_OUTPUT = 8;
-
-const int PIN_MANUAL_SUC_INPUT = 11;
+const int PIN_BLOCK_INPUT = 2; // block toggle switch input
+const int PIN_BLOCK_OUTPUT = 3; // block signal out to TDT
+const int PIN_PUMP_OUTPUT = 4; // pump motor
+const int PIN_ATTK_OUTPUT = 5; // attack signal out to lobsterbot
+const int PIN_TRIAL_INPUT = 6; // door sensor
+const int PIN_TRIAL_OUTPUT = 7; // trial signal out to TDT
+const int PIN_CLOSE_OUTPUT = 8; // (previously Tone pin) currently using as 
 const int PIN_MANUAL_SUC_OUTPUT = 9;
-
+const int PIN_LICK_INPUT = 10;
+const int PIN_MANUAL_BUTTON_INPUT = 11;
 const int PIN_CLEANUP = 12; // when on, pump and valve is on
 const int PIN_PUMP_INPUT = 13;
 
-int pin_manual_output;
-
-
-// Event state boolean variables
+// Event State Variables
+bool isBlockEverStarted = false;
 bool isBlockSwitchOn = false;
 bool isBlock = false;
 
@@ -38,93 +33,112 @@ bool isTrial = false;
 bool isAttackArmed = false;
 bool isAttacked = false;
 
-bool isBlockEverStarted = false;
-
 // Time variable
 unsigned long blockOnSetTime = 0;
-unsigned long trialOnSetTime = 0;
 unsigned long attackOnSetTime = 0;
-unsigned long AT;
-
-unsigned long maxLickTime = 6000; //max sucrose time 6000
-unsigned long lickOffSetTime = 0;
+unsigned long attackOffsetTime;
 
 unsigned long accumLickTime = 0; // accum licking time 
 unsigned long lickStartTime = 0;
 
 // Etc.
-int sa = 70; //six second attack probability
-int trcount = 1;
+int percentage_attack_in_6sec = 70; //six second attack probability
+int trial = 0;
 int numLick = 0;
-bool lickToggle = false;
 
 String mode;
 
 void setup() 
 {
-  // Block Switch & LED
-  pinMode(PIN_BLOCK_INPUT, INPUT);
-  pinMode(PIN_BLOCK_OUTPUT, OUTPUT);
+  // Setup : pinMode 
+  pinMode(PIN_BLOCK_INPUT, INPUT); //D2
+  pinMode(PIN_BLOCK_OUTPUT, OUTPUT); //D3
+  pinMode(PIN_PUMP_OUTPUT, OUTPUT); //D4
+  pinMode(PIN_ATTK_OUTPUT, OUTPUT); //D5
+  pinMode(PIN_TRIAL_INPUT, INPUT); //D6
+  pinMode(PIN_TRIAL_OUTPUT, OUTPUT); //D7
+  pinMode(PIN_CLOSE_OUTPUT, OUTPUT); //D8
+  pinMode(PIN_MANUAL_SUC_OUTPUT, OUTPUT); //D9
+  pinMode(PIN_LICK_INPUT, INPUT); //D10
+  pinMode(PIN_MANUAL_BUTTON_INPUT, INPUT); //D11
+  pinMode(PIN_CLEANUP, INPUT); //D12
+  pinMode(PIN_PUMP_INPUT, INPUT); //D13
+
+  // Setup : Setup default output value
   digitalWrite(PIN_BLOCK_OUTPUT,LOW);
-
-  // Trial Sensor & LED
-  pinMode(PIN_DOOR_INPUT, INPUT); //because its a magnetic switch, 0 is on
-  pinMode(PIN_TRIAL_OUTPUT, OUTPUT);
+  digitalWrite(PIN_PUMP_OUTPUT,LOW);
+  digitalWrite(PIN_ATTK_OUTPUT,LOW);
   digitalWrite(PIN_TRIAL_OUTPUT,LOW);
-
-  pinMode(PIN_LICK_INPUT, INPUT);
-  pinMode(PIN_ATTK_OUTPUT, OUTPUT);
-  pinMode(PIN_PUMP_OUTPUT, OUTPUT);
-
-  pinMode(PIN_MANUAL_SUC_INPUT, INPUT);
-  pinMode(PIN_MANUAL_SUC_OUTPUT, OUTPUT);
-  pinMode(PIN_CLEANUP, INPUT);
-
-  pinMode(PIN_CLOSE_OUTPUT, OUTPUT);
-
-  // generate random seed
+  digitalWrite(PIN_CLOSE_OUTPUT,LOW);
+  digitalWrite(PIN_MANUAL_SUC_OUTPUT,LOW);
+  
+  // Generate random seed
   randomSeed(analogRead(0));
 
+  // Setup : Start Serial Comm
   Serial.begin(9600);
   Serial.println(START_MSG);
+
+  // Setup : Prompt Experiment Mode
   Serial.println("==============Select Mode============");
-  Serial.println("Mode : at : attack | tr :train");
+  Serial.println("+--------------+");
+  Serial.println("|      mode    |");
+  Serial.println("+---------+----+");
+  Serial.println("| train:  | tr |");
+  Serial.println("| attack: | at |");
+  Serial.println("+---------+----+");
+  
+  // Setup : Read Experiment Mode
+  bool invalidInput = true;
   Serial.println("Mode? : ");
-  
-  
-  bool flag = true;
-  while (flag)
+  while (invalidInput)
   {
     if (Serial.available())
     {
       mode = Serial.readString();
-      if (mode = "at")
+      
+      if (mode == "at")
       {
-        pin_manual_output = PIN_ATTK_OUTPUT;
-        Serial.println("Attack Mode");
-        digitalWrite(PIN_MANUAL_SUC_OUTPUT, LOW);
-        flag = false;
+        Serial.println("==============Attack Mode============");
+        invalidInput = false;
       }
-      else if (mode = "tr")
+      else if (mode == "tr")
       {
-        pin_manual_output = PIN_MANUAL_SUC_OUTPUT;
-        Serial.println("Training Mode");
-        digitalWrite(PIN_ATTK_OUTPUT, LOW);
-        flag = false;
+        Serial.println("=============Training Mode===========");
+        invalidInput = false;
       }
       else
       {
         Serial.println("Wrong Input");
-        flag = true;
+        Serial.println("Mode? : ");
+        invalidInput = true;
+      }
+    }
+  }
+
+  // Setup : Prompt Attack in 6sec percentage
+  Serial.println("=======Select Attack in 6sec %=======");
+
+  // Setup : Read Attack in 6sec percentage
+  invalidInput = true;
+  Serial.println("Percentage? : ");
+  while (invalidInput)
+  {
+    if (Serial.available())
+    {
+      percentage_attack_in_6sec = Serial.parseInt();
+      if (percentage_attack_in_6sec >= 0 && percentage_attack_in_6sec <=100)
+      {
+        invalidInput = false;
       }
     }
   }
 
   Serial.println("==========Current Protocol===========");
   Serial.print("Attack in 6sec : ");
-  Serial.println(sa);
+  Serial.println(percentage_attack_in_6sec);
   Serial.print("Attack in 3sec : ");
-  Serial.println(100-sa);
+  Serial.println(100-percentage_attack_in_6sec);
   Serial.println("=====================================");
 }
 
@@ -146,9 +160,8 @@ void loop()
       
       // Init. all variables
       numLick = 0;
-      trcount = 1;
+      trial = 0;
       accumLickTime = 0;
-
     }
   }
   else // in block
@@ -161,7 +174,7 @@ void loop()
       {
         Serial.println("##########Experiment Finished##########");
         Serial.print("Number of Total Trials : ");
-        Serial.println(trcount);
+        Serial.println(trial);
         Serial.print("Number of Total Licks : ");
         Serial.println(numLick);
         Serial.print("Lick Time : ");
@@ -175,23 +188,26 @@ void loop()
   /*********************/
   /********Trial********/
   /*********************/
-  isDoorClosed = digitalRead(PIN_DOOR_INPUT);
+  isDoorClosed = digitalRead(PIN_TRIAL_INPUT);
   if(!isDoorClosed) // Door opened = trial started
   {
     if(!isTrial) // Start Trial
     {
-      trialOnSetTime = millis(); 
+      trial = trial+1;
       digitalWrite(PIN_TRIAL_OUTPUT,HIGH);
 
-      if(random(100) < sa)   //decide long or short attack onset time
-        AT = 6000;
+      if(random(100) < percentage_attack_in_6sec)   //decide long or short attack onset time
+        attackOffsetTime = 6000;
       else
-        AT = 3000;
+        attackOffsetTime = 3000;
       
       // Print Trial Info
       Serial.print("trial : ");
-      Serial.println(trcount);
-      trcount = trcount+1;
+      Serial.println(trial);
+      
+      Serial.print("Attack in ");
+      Serial.println(attackOffsetTime);
+      Serial.println("ms sec");
       
       isTrial = true;
     }
@@ -203,25 +219,15 @@ void loop()
         if(digitalRead(PIN_LICK_INPUT)) // licked
         {
           isAttackArmed = true;
-          attackOnSetTime = millis() + AT;
-          lickOffSetTime = millis() + maxLickTime;
-
-          Serial.print("Licked. Attack in ");
-          Serial.print(AT);
-          Serial.println("ms sec");
+          attackOnSetTime = millis() + attackOffsetTime;
+          Serial.print("########Licked########");
         }
       }
       else // armed
       {
         if(attackOnSetTime < millis()) // Attack Onset Time reached
         {
-          digitalWrite(PIN_ATTK_OUTPUT,HIGH);
-          digitalWrite(PIN_CLOSE_OUTPUT, HIGH); // this sig will command the door controller to close after 1 sec from this sig.
-          delay(100);
-          digitalWrite(PIN_ATTK_OUTPUT,LOW);
-          digitalWrite(PIN_CLOSE_OUTPUT, LOW);
-          Serial.println("##########Attacked!!##########");
-          isAttacked = true;
+          attack();
         }
       }
     }
@@ -233,14 +239,13 @@ void loop()
       isTrial = false;
       isAttackArmed = false;
       isAttacked = false;
-
       digitalWrite(PIN_TRIAL_OUTPUT,LOW);
-      
     }
   }
 
-  // Manual Scrose and Pump
-  if (digitalRead(PIN_CLEANUP) == HIGH){ // clean up mode
+  // Manual Button Control and Pump
+  if (digitalRead(PIN_CLEANUP) == HIGH)// Clean up ON
+  { 
     digitalWrite(PIN_MANUAL_SUC_OUTPUT, HIGH);
     digitalWrite(PIN_PUMP_OUTPUT, HIGH);
   }
@@ -249,25 +254,20 @@ void loop()
   	if (mode == "at")
   	{
   		digitalWrite(PIN_MANUAL_SUC_OUTPUT, LOW);
-  		if(digitalRead(PIN_MANUAL_SUC_INPUT) == HIGH)
+  		if(digitalRead(PIN_MANUAL_BUTTON_INPUT) == HIGH)
   		{
-          digitalWrite(PIN_ATTK_OUTPUT,HIGH);
-          digitalWrite(PIN_CLOSE_OUTPUT, HIGH); // this sig will command the door controller to close after 1 sec from this sig.
-          delay(100);
-          digitalWrite(PIN_ATTK_OUTPUT,LOW);
-          digitalWrite(PIN_CLOSE_OUTPUT, LOW);
-          Serial.println("##########Attacked!!##########");
-          isAttacked = true;
+        attack();
   		}
   	}
-    else
+    else if (mode == "tr")
     {
-    	digitalWrite(PIN_MANUAL_SUC_OUTPUT, digitalRead(PIN_MANUAL_SUC_INPUT));
+    	digitalWrite(PIN_MANUAL_SUC_OUTPUT, digitalRead(PIN_MANUAL_BUTTON_INPUT));
     }
     digitalWrite(PIN_PUMP_OUTPUT,digitalRead(PIN_PUMP_INPUT));
   }
   
   //Num Lick Count
+  bool lickToggle = false;
   if(digitalRead(PIN_LICK_INPUT)==HIGH)
   {
     if(!lickToggle)
@@ -298,4 +298,15 @@ void loop()
       accumLickTime += millis() - lickStartTime;
     }
   }
+}
+
+void attack()
+{
+  digitalWrite(PIN_ATTK_OUTPUT,HIGH);
+  digitalWrite(PIN_CLOSE_OUTPUT, HIGH); // this sig will command the door controller to close after 1 sec from this sig.
+  delay(100);
+  digitalWrite(PIN_ATTK_OUTPUT,LOW);
+  digitalWrite(PIN_CLOSE_OUTPUT, LOW);
+  Serial.println("##########Attacked!!##########");
+  isAttacked = true;
 }
