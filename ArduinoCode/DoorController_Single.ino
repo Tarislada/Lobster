@@ -101,6 +101,7 @@ void loop()
   {
     if (prevToggleState != currToggleState) // toggle button state changed
     {
+      doorStartTime = millis();
       prevToggleState = currToggleState;
       isDirectionUp = !currToggleState;
       moveDoor(isDirectionUp);
