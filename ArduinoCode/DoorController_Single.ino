@@ -90,6 +90,7 @@ void loop()
         //was going down
         if (digitalRead(PIN_DOOR_STATE_INPUT) == HIGH) // Down stop criterion : door contact + moving more than 1sec
         {
+          delay(100);
           noTone(PIN_MOTOR_CLK_OUTPUT);
           isDoorMoving = false;
         }
