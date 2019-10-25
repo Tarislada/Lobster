@@ -208,7 +208,7 @@ void loop()
       
       Serial.print("Attack in ");
       Serial.print(attackOffsetTime);
-      Serial.println("ms sec");
+      Serial.print("ms sec");
       
       isTrial = true;
     }
@@ -221,13 +221,14 @@ void loop()
         {
           isAttackArmed = true;
           attackOnSetTime = millis() + attackOffsetTime;
-          Serial.print("########Licked########");
+          Serial.println("########Licked########");
         }
       }
       else // armed
       {
         if(attackOnSetTime < millis()) // Attack Onset Time reached
         {
+          Serial.println("######Attacked!!######");
           attack();
         }
       }
@@ -257,14 +258,8 @@ void loop()
   		digitalWrite(PIN_MANUAL_SUC_OUTPUT, LOW);
   		if(digitalRead(PIN_MANUAL_BUTTON_INPUT) == HIGH)
   		{
-        digitalWrite(PIN_ATTK_OUTPUT,HIGH);
-        digitalWrite(PIN_CLOSE_OUTPUT, HIGH); // this sig will command the door controller to close after 1 sec from this sig.
-        delay(100);
-        digitalWrite(PIN_ATTK_OUTPUT,LOW);
-        digitalWrite(PIN_CLOSE_OUTPUT, LOW);
         Serial.println("Manual Attack");
-        delay(1000);
-        isAttacked = true;
+        attack();
   		}
   	}
     else if (mode == "tr")
@@ -314,7 +309,6 @@ void attack()
   delay(100);
   digitalWrite(PIN_ATTK_OUTPUT,LOW);
   digitalWrite(PIN_CLOSE_OUTPUT, LOW);
-  Serial.println("##########Attacked!!##########");
   delay(1000);
   isAttacked = true;
 }
