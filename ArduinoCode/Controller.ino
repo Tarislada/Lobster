@@ -47,6 +47,7 @@ int trial = 0;
 int numLick = 0;
 
 String mode;
+bool lickToggle = false;
 
 void setup() 
 {
@@ -206,7 +207,7 @@ void loop()
       Serial.println(trial);
       
       Serial.print("Attack in ");
-      Serial.println(attackOffsetTime);
+      Serial.print(attackOffsetTime);
       Serial.println("ms sec");
       
       isTrial = true;
@@ -256,7 +257,14 @@ void loop()
   		digitalWrite(PIN_MANUAL_SUC_OUTPUT, LOW);
   		if(digitalRead(PIN_MANUAL_BUTTON_INPUT) == HIGH)
   		{
-        attack();
+        digitalWrite(PIN_ATTK_OUTPUT,HIGH);
+        digitalWrite(PIN_CLOSE_OUTPUT, HIGH); // this sig will command the door controller to close after 1 sec from this sig.
+        delay(100);
+        digitalWrite(PIN_ATTK_OUTPUT,LOW);
+        digitalWrite(PIN_CLOSE_OUTPUT, LOW);
+        Serial.println("Manual Attack");
+        delay(1000);
+        isAttacked = true;
   		}
   	}
     else if (mode == "tr")
@@ -267,7 +275,6 @@ void loop()
   }
   
   //Num Lick Count
-  bool lickToggle = false;
   if(digitalRead(PIN_LICK_INPUT)==HIGH)
   {
     if(!lickToggle)
