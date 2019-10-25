@@ -308,5 +308,6 @@ void attack()
   digitalWrite(PIN_ATTK_OUTPUT,LOW);
   digitalWrite(PIN_CLOSE_OUTPUT, LOW);
   Serial.println("##########Attacked!!##########");
+  delay(1000);
   isAttacked = true;
 }
