@@ -5,7 +5,7 @@
 
 const String START_MSG =\
 "Lobsterbot Controller\n \
-Version 2.0\n \
+Version 2.1\n \
 Knowblesse 2019";
 
 // Assign Pin Numbers
@@ -221,7 +221,7 @@ void loop()
         {
           isAttackArmed = true;
           attackOnSetTime = millis() + attackOffsetTime;
-          Serial.println("########Licked########");
+          Serial.println(" Licked");
         }
       }
       else // armed
