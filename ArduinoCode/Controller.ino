@@ -221,7 +221,7 @@ void loop()
         {
           isAttackArmed = true;
           attackOnSetTime = millis() + attackOffsetTime;
-          Serial.println("########Licked########");
+          Serial.println(" Licked");
         }
       }
       else // armed
