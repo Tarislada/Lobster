@@ -2,9 +2,6 @@
 /sampledata/*
 /data/*
 PythonCode/\.idea/
-
 ~$*.*
-
 Apparatus/OldVersions/
-
 *.lck
