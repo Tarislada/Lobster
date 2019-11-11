@@ -1,7 +1,3 @@
-/* 
-  Created by Knowblesse, 2018-11-27
-  Arduino Script for the Lobster Controller
-*/
 
 const String START_MSG =\
 "Lobsterbot Controller\n \
@@ -33,6 +29,8 @@ bool isTrial = false;
 bool isAttackArmed = false;
 bool isAttacked = false;
 
+bood timelimitreached = false;
+
 // Time variable
 unsigned long blockOnSetTime = 0;
 unsigned long attackOnSetTime = 0;
@@ -40,6 +38,8 @@ unsigned long attackOffsetTime;
 
 unsigned long accumLickTime = 0; // accum licking time 
 unsigned long lickStartTime = 0;
+unsigned long timelimit = 0;     // duration of each Trials
+unsigned long pumpingtime = 0;   // internal variable for auto-running pumps
 
 // Etc.
 int percentage_attack_in_6sec = 70; //six second attack probability
@@ -134,7 +134,20 @@ void setup()
       }
     }
   }
+  // Setup : Time limit
+  invalidInput = true;
+  Serial.println("Duration? (in minutes): ")
+  while (invalidInput)
+  {
+    if (Serial.available())
+    {
+      timelimit = Serial.parseInt();
+      timelimit = timelimit*1000*60;
+      invalidInput = false;
+    }
+  }
 
+  // Review current protocol
   Serial.println("==========Current Protocol===========");
   Serial.print("Attack in 6sec : ");
   Serial.println(percentage_attack_in_6sec);
@@ -208,7 +221,7 @@ void loop()
       
       Serial.print("Attack in ");
       Serial.print(attackOffsetTime);
-      Serial.print("ms sec");
+      Serial.println("ms sec");
       
       isTrial = true;
     }
@@ -242,6 +255,14 @@ void loop()
       isAttackArmed = false;
       isAttacked = false;
       digitalWrite(PIN_TRIAL_OUTPUT,LOW);
+      if (trial%2=0)
+      {
+        digitalWrite(PIN_PUMP_OUTPUT,HIGH);
+        pumpingtime = millis();
+        while (millis()<pumpingtime+750);
+        {}
+        digitalWrite(PIN_PUMP_OUTPUT,LOW);
+      }
     }
   }
 
@@ -281,7 +302,7 @@ void loop()
 
       if(numLick%10 == 0)
       {
-        if(numLick%100 == 0)
+        if(numLick%20 == 0)
         { 
           unsigned long timepassed = millis() - blockOnSetTime;
           Serial.print(long(timepassed / 1000 / 60));
@@ -300,6 +321,12 @@ void loop()
       accumLickTime += millis() - lickStartTime;
     }
   }
+  //Time alert when set amount of time has passed
+  if (timelimitreached == false && millis() - blockOnSetTime>timelimit)
+  {
+    Serial.println("###### Alert: Timelimit reached! ######")
+    timelimitreached = true;
+  }
 }
 
 void attack()
@@ -312,3 +339,8 @@ void attack()
   delay(1000);
   isAttacked = true;
 }
+//create suggestions for arduino code 
+//-time alert interval
+//-time alert after set amount
+
+//auto clean up
