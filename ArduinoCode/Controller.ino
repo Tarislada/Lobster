@@ -258,7 +258,7 @@ void loop()
       if (trial%2=0)
       {
         digitalWrite(PIN_PUMP_OUTPUT,HIGH);
-        delay(750)
+        delay(750);
         digitalWrite(PIN_PUMP_OUTPUT,LOW);
       }
     }
@@ -322,7 +322,7 @@ void loop()
   //Time alert when set amount of time has passed
   if (timelimitreached == false && millis() - blockOnSetTime>timelimit)
   {
-    Serial.println("###### Alert: Timelimit reached! ######")
+    Serial.println("###### Alert: Timelimit reached! ######");
     timelimitreached = true;
   }
 }
