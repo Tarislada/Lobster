@@ -39,7 +39,7 @@ unsigned long attackOffsetTime;
 unsigned long accumLickTime = 0; // accum licking time 
 unsigned long lickStartTime = 0;
 unsigned long timelimit = 0;     // duration of each Trials
-unsigned long pumpingtime = 0;   // internal variable for auto-running pumps
+
 
 // Etc.
 int percentage_attack_in_6sec = 70; //six second attack probability
@@ -258,9 +258,7 @@ void loop()
       if (trial%2=0)
       {
         digitalWrite(PIN_PUMP_OUTPUT,HIGH);
-        pumpingtime = millis();
-        while (millis()<pumpingtime+750);
-        {}
+        delay(750)
         digitalWrite(PIN_PUMP_OUTPUT,LOW);
       }
     }
@@ -339,8 +337,3 @@ void attack()
   delay(1000);
   isAttacked = true;
 }
-//create suggestions for arduino code 
-//-time alert interval
-//-time alert after set amount
-
-//auto clean up
