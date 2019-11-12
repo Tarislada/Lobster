@@ -29,7 +29,7 @@ bool isTrial = false;
 bool isAttackArmed = false;
 bool isAttacked = false;
 
-bood timelimitreached = false;
+bool timelimitreached = false;
 
 // Time variable
 unsigned long blockOnSetTime = 0;
@@ -136,7 +136,7 @@ void setup()
   }
   // Setup : Time limit
   invalidInput = true;
-  Serial.println("Duration? (in minutes): ")
+  Serial.println("Duration? (in minutes): ");
   while (invalidInput)
   {
     if (Serial.available())
@@ -255,7 +255,7 @@ void loop()
       isAttackArmed = false;
       isAttacked = false;
       digitalWrite(PIN_TRIAL_OUTPUT,LOW);
-      if (trial%2=0)
+      if (trial%2==0)
       {
         digitalWrite(PIN_PUMP_OUTPUT,HIGH);
         delay(750);
