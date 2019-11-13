@@ -171,6 +171,7 @@ void loop()
       isBlockEverStarted = true;
       blockOnSetTime = millis();
       isBlock = true;
+      timelimitreached = false;
       
       // Init. all variables
       numLick = 0;
