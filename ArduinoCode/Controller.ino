@@ -1,3 +1,7 @@
+/* 
+  Created by Knowblesse, 2018-11-27
+  Arduino Script for the Lobster Controller
+*/
 
 const String START_MSG =\
 "Lobsterbot Controller\n \
