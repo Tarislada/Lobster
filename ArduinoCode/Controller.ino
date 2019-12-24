@@ -157,6 +157,8 @@ void setup()
   Serial.println(percentage_attack_in_6sec);
   Serial.print("Attack in 3sec : ");
   Serial.println(100-percentage_attack_in_6sec);
+  Serial.print("Block duration : ");
+  Serial.println(timelimit/6000);
   Serial.println("=====================================");
 }
 
